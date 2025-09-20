@@ -318,7 +318,7 @@ export interface NotificationsState {
 
 export interface OfflineState {
   isOnline: boolean;
-  pendingActions: any[];
+  pendingActions: unknown[];
   lastSyncTime: Date | null;
 }
 
@@ -332,7 +332,7 @@ export interface NavigationItem {
   id: string;
   label: string;
   labelHi: string;
-  icon: React.ComponentType;
+  icon: React.ComponentType<{ className?: string }>;
   path: string;
   badge?: number;
 }
