@@ -1,0 +1,112 @@
+{
+  "app": {
+    "title": "Bharat Breed Rakshask",
+    "description": "Comprehensive cattle and buffalo breed management system for Indian farmers"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "classify": "Classify",
+    "profile": "Profile", 
+    "breeding": "Breeding"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome to Bharat Breed Rakshask",
+    "subtitle": "Manage your cattle and buffalo with AI-powered breed classification",
+    "classifyAnimal": "Classify Animal",
+    "classifyDescription": "Use camera or gallery",
+    "animalProfile": "Animal Profile", 
+    "animalDescription": "View animal details",
+    "buffaloeReproduction": "Buffaloes Reproduction",
+    "reproductionDescription": "Manage reproduction cycles",
+    "breedsSupported": "Breeds Supported",
+    "animalsRegistered": "Animals Registered",
+    "helpTitle": "Need Help Getting Started?",
+    "helpDescription": "Learn how to classify your first animal or add animals to your farm",
+    "viewTutorial": "View Tutorial"
+  },
+  "classify": {
+    "title": "Classify",
+    "uploadImage": "Upload Image", 
+    "camera": "Camera",
+    "gallery": "Gallery",
+    "tipsTitle": "Tips for Best Results",
+    "tips": {
+      "lighting": "Ensure good lighting",
+      "fullAnimal": "Capture the full animal in frame", 
+      "sharpImage": "Avoid blurry images",
+      "sideView": "Take photo from the side for best profile view"
+    },
+    "classifyNow": "Classify Now",
+    "classifying": "Classifying...",
+    "analyzing": "Analyzing image...",
+    "aiProcessing": "AI Processing",
+    "result": "Result",
+    "confidence": "Confidence",
+    "characteristics": {
+      "dairyPotential": "Good dairy potential",
+      "mediumBody": "Medium body size", 
+      "heatTolerant": "Heat tolerant",
+      "diseaseResistant": "Disease resistant"
+    },
+    "heatmap": "Heatmap",
+    "save": "Save",
+    "tryAnother": "Try Another",
+    "viewDetails": "View Details"
+  },
+  "profile": {
+    "title": "Animal Profile",
+    "search": "Search animals...",
+    "totalAnimals": "Total Animals",
+    "pregnant": "Pregnant", 
+    "yourAnimals": "Your Animals",
+    "noAnimalsTitle": "No Animals Yet",
+    "noAnimalsDescription": "Start by adding your first animal to track their health and breeding",
+    "addAnimal": "Add Animal",
+    "healthy": "Healthy",
+    "sick": "Sick", 
+    "pregnant": "Pregnant"
+  },
+  "breeding": {
+    "title": "Breeding",
+    "upcoming": "Upcoming",
+    "bornThisMonth": "Born This Month",
+    "upcomingEvents": "Upcoming Events",
+    "recentBreeding": "Recent Breeding",
+    "noUpcomingTitle": "No Upcoming Events",
+    "noUpcomingDescription": "Schedule breeding or add vaccination reminders",
+    "daysLeft": "days left",
+    "mated": "Mated",
+    "due": "Due",
+    "scheduleBreeding": "Schedule Breeding",
+    "addRecord": "Add Record",
+    "natural": "Natural",
+    "confirmedPregnancy": "Confirmed Pregnancy",
+    "dueDate": "Due Date",
+    "vaccination": "Vaccination"
+  },
+  "common": {
+    "loading": "Loading your dashboard...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit", 
+    "delete": "Delete",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "male": "Male",
+    "female": "Female",
+    "cattle": "Cattle",
+    "buffalo": "Buffalo",
+    "years": "years",
+    "months": "months"
+  },
+  "breeds": {
+    "gir": "Gir",
+    "sahiwal": "Sahiwal", 
+    "redSindhi": "Red Sindhi",
+    "murrah": "Murrah",
+    "niliRavi": "Nili Ravi",
+    "bhadawari": "Bhadawari"
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "app": {
+    "title": "भारत ब्रीड रक्षक",
+    "description": "भारतीय किसानों के लिए व्यापक पशु और भैंस नस्ल प्रबंधन प्रणाली"
+  },
+  "navigation": {
+    "dashboard": "डैशबोर्ड", 
+    "classify": "वर्गीकृत",
+    "profile": "प्रोफाइल",
+    "breeding": "प्रजनन"
+  },
+  "dashboard": {
+    "title": "डैशबोर्ड",
+    "welcome": "भारत ब्रीड रक्षक में आपका स्वागत है",
+    "subtitle": "एआई-संचालित नस्ल वर्गीकरण के साथ अपने पशुओं और भैंसों का प्रबंधन करें",
+    "classifyAnimal": "पशु वर्गीकरण",
+    "classifyDescription": "कैमरा या गैलरी का उपयोग करें", 
+    "animalProfile": "पशु प्रोफाइल",
+    "animalDescription": "पशु विवरण देखें",
+    "buffaloeReproduction": "भैंस प्रजनन",
+    "reproductionDescription": "प्रजनन चक्र का प्रबंधन करें",
+    "breedsSupported": "समर्थित नस्लें",
+    "animalsRegistered": "पंजीकृत पशु",
+    "helpTitle": "शुरुआत में मदद चाहिए?",
+    "helpDescription": "अपने पहले पशु को वर्गीकृत करना या अपने फार्म में पशु जोड़ना सीखें",
+    "viewTutorial": "ट्यूटोरियल देखें"
+  },
+  "classify": {
+    "title": "वर्गीकृत",
+    "uploadImage": "छवि अपलोड करें",
+    "camera": "कैमरा",
+    "gallery": "गैलरी", 
+    "tipsTitle": "सर्वोत्तम परिणामों के लिए सुझाव",
+    "tips": {
+      "lighting": "अच्छी रोशनी सुनिश्चित करें",
+      "fullAnimal": "पूरे पशु को फ्रेम में कैप्चर करें",
+      "sharpImage": "धुंधली छवियों से बचें",
+      "sideView": "सर्वोत्तम प्रोफाइल दृश्य के लिए साइड से फोटो लें"
+    },
+    "classifyNow": "अभी वर्गीकृत करें",
+    "classifying": "वर्गीकरण कर रहे हैं...",
+    "analyzing": "छवि का विश्लेषण कर रहे हैं...",
+    "aiProcessing": "एआई प्रक्रिया",
+    "result": "परिणाम",
+    "confidence": "विश्वास",
+    "characteristics": {
+      "dairyPotential": "अच्छी डेयरी क्षमता",
+      "mediumBody": "मध्यम शरीर का आकार",
+      "heatTolerant": "गर्मी सहनशील", 
+      "diseaseResistant": "रोग प्रतिरोधी"
+    },
+    "heatmap": "हीट मैप",
+    "save": "सेव करें",
+    "tryAnother": "दूसरा करें",
+    "viewDetails": "विवरण देखें"
+  },
+  "profile": {
+    "title": "पशु प्रोफाइल",
+    "search": "पशुओं को खोजें...",
+    "totalAnimals": "कुल पशु", 
+    "pregnant": "गर्भवती",
+    "yourAnimals": "आपके पशु",
+    "noAnimalsTitle": "अभी तक कोई पशु नहीं",
+    "noAnimalsDescription": "अपने पहले पशु को जोड़कर उनके स्वास्थ्य और प्रजनन को ट्रैक करना शुरू करें",
+    "addAnimal": "पशु जोड़ें",
+    "healthy": "स्वस्थ",
+    "sick": "बीमार",
+    "pregnant": "गर्भवती"
+  },
+  "breeding": {
+    "title": "प्रजनन",
+    "upcoming": "आगामी",
+    "bornThisMonth": "इस महीने जन्मे",
+    "upcomingEvents": "आगामी घटनाएं",
+    "recentBreeding": "हाल की प्रजनन",
+    "noUpcomingTitle": "कोई आगामी घटना नहीं",
+    "noUpcomingDescription": "प्रजनन शेड्यूल करें या वैक्सीनेशन रिमाइंडर जोड़ें",
+    "daysLeft": "दिन बचे",
+    "mated": "संभोग",
+    "due": "देय",
+    "scheduleBreeding": "प्रजनन शेड्यूल करें",
+    "addRecord": "रिकॉर्ड जोड़ें", 
+    "natural": "प्राकृतिक",
+    "confirmedPregnancy": "पुष्ट गर्भावस्था",
+    "dueDate": "नियत तारीख",
+    "vaccination": "टीकाकरण"
+  },
+  "common": {
+    "loading": "आपका डैशबोर्ड लोड हो रहा है...",
+    "save": "सेव करें",
+    "cancel": "रद्द करें", 
+    "edit": "संपादित करें",
+    "delete": "हटाएं",
+    "add": "जोड़ें",
+    "search": "खोजें",
+    "filter": "फिल्टर",
+    "male": "नर",
+    "female": "मादा",
+    "cattle": "गाय",
+    "buffalo": "भैंस",
+    "years": "साल",
+    "months": "महीने"
+  },
+  "breeds": {
+    "gir": "गिर",
+    "sahiwal": "साहीवाल",
+    "redSindhi": "लाल सिंधी", 
+    "murrah": "मुर्रा",
+    "niliRavi": "नीली रावी",
+    "bhadawari": "भदावरी"
+  }
+}
