@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Test - Bharat Breed Rakshak</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f4f1;
+            color: #034921;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #0d5d35;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .status.info { background: #e1f5fe; border: 1px solid #0277bd; }
+        .status.success { background: #e8f5e8; border: 1px solid #2e7d32; }
+        .status.warning { background: #fff3cd; border: 1px solid #f57c00; }
+        .status.error { background: #ffebee; border: 1px solid #d32f2f; }
+        
+        .btn {
+            background: #0d5d35;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            min-width: 150px;
+        }
+        .btn:hover { background: #034921; }
+        .btn:disabled { background: #aab5ab; cursor: not-allowed; }
+        
+        video {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            background: #000;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .info-card {
+            padding: 15px;
+            border: 1px solid #aab5ab;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .info-title {
+            font-weight: bold;
+            color: #0d5d35;
+            margin-bottom: 5px;
+        }
+        
+        @media (max-width: 600px) {
+            .info-grid { grid-template-columns: 1fr; }
+            .btn { width: 100%; margin: 5px 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Camera Test</h1>
+            <p>Bharat Breed Rakshak - Camera Debugging Tool</p>
+        </div>
+
+        <div id="device-info" class="status info">
+            <strong>🔍 Checking device compatibility...</strong>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-title">Protocol</div>
+                <div id="protocol">-</div>
+            </div>
+            <div class="info-card">
+                <div class="info-title">Hostname</div>
+                <div id="hostname">-</div>
+            </div>
+            <div class="info-card">
+                <div class="info-title">User Agent</div>
+                <div id="useragent">-</div>
+            </div>
+            <div class="info-card">
+                <div class="info-title">Cameras Detected</div>
+                <div id="camera-count">-</div>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="btn" onclick="testCameraAccess()">🔍 Test Camera Access</button>
+            <button class="btn" onclick="listDevices()">📱 List Cameras</button>
+            <button class="btn" onclick="stopCamera()">⏹️ Stop Camera</button>
+        </div>
+
+        <div style="text-align: center;">
+            <video id="video" autoplay playsinline muted style="display: none;"></video>
+        </div>
+
+        <div id="results"></div>
+
+        <div style="margin-top: 30px; text-align: center; color: #557960; font-size: 14px;">
+            <p>Built with ❤️ by Team Codeyodhaa</p>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const results = document.getElementById('results');
+        let currentStream = null;
+
+        // Display device info
+        function displayDeviceInfo() {
+            document.getElementById('protocol').textContent = window.location.protocol;
+            document.getElementById('hostname').textContent = window.location.hostname;
+            document.getElementById('useragent').textContent = navigator.userAgent.substring(0, 50) + '...';
+        }
+
+        // Check initial compatibility
+        function checkCompatibility() {
+            const deviceInfo = document.getElementById('device-info');
+            const isSecure = window.isSecureContext || window.location.protocol === 'https:' || window.location.hostname === 'localhost';
+            const hasMediaDevices = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            let status = '';
+            let className = 'status ';
+            
+            if (!hasMediaDevices) {
+                status = '❌ Camera API not supported in this browser';
+                className += 'error';
+            } else if (!isSecure) {
+                status = '⚠️ HTTPS required for camera access on network devices';
+                className += 'warning';
+            } else {
+                status = '✅ Device appears compatible with camera access';
+                className += 'success';
+            }
+            
+            if (isMobile) {
+                status += ' (Mobile device detected)';
+            }
+            
+            deviceInfo.innerHTML = `<strong>${status}</strong>`;
+            deviceInfo.className = className;
+        }
+
+        // List available cameras
+        async function listDevices() {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                
+                document.getElementById('camera-count').textContent = videoDevices.length;
+                
+                let html = '<div class="status info"><strong>📱 Available Cameras:</strong><ul style="margin-top: 10px; text-align: left;">';
+                
+                if (videoDevices.length === 0) {
+                    html += '<li>No cameras detected</li>';
+                } else {
+                    videoDevices.forEach((device, index) => {
+                        html += `<li>Camera ${index + 1}: ${device.label || 'Unknown Camera'}</li>`;
+                    });
+                }
+                
+                html += '</ul></div>';
+                results.innerHTML = html;
+                
+            } catch (error) {
+                results.innerHTML = `<div class="status error"><strong>❌ Error listing devices:</strong> ${error.message}</div>`;
+            }
+        }
+
+        // Test camera access with multiple configurations
+        async function testCameraAccess() {
+            results.innerHTML = '<div class="status info"><strong>🔍 Testing camera access...</strong></div>';
+            
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            const configs = isMobile ? [
+                { video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } } },
+                { video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } } },
+                { video: { width: { ideal: 640 }, height: { ideal: 480 } } },
+                { video: true }
+            ] : [
+                { video: { width: { ideal: 1280 }, height: { ideal: 720 } } },
+                { video: { facingMode: 'user' } },
+                { video: true }
+            ];
+            
+            for (let i = 0; i < configs.length; i++) {
+                try {
+                    console.log(`Testing config ${i + 1}:`, configs[i]);
+                    
+                    const stream = await navigator.mediaDevices.getUserMedia(configs[i]);
+                    
+                    // Success!
+                    currentStream = stream;
+                    video.srcObject = stream;
+                    video.style.display = 'block';
+                    
+                    const videoTrack = stream.getVideoTracks()[0];
+                    const settings = videoTrack.getSettings();
+                    
+                    results.innerHTML = `
+                        <div class="status success">
+                            <strong>✅ Camera access successful!</strong><br>
+                            Configuration ${i + 1} worked<br>
+                            Resolution: ${settings.width}x${settings.height}<br>
+                            Device: ${videoTrack.label || 'Unknown Camera'}
+                        </div>
+                    `;
+                    return;
+                    
+                } catch (error) {
+                    console.warn(`Config ${i + 1} failed:`, error);
+                    
+                    if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                        results.innerHTML = `
+                            <div class="status error">
+                                <strong>❌ Permission denied</strong><br>
+                                Please allow camera access and try again.<br>
+                                ${isMobile ? 'Check your browser settings for camera permissions.' : 'Click "Allow" when prompted.'}
+                            </div>
+                        `;
+                        return;
+                    }
+                }
+            }
+            
+            results.innerHTML = `
+                <div class="status error">
+                    <strong>❌ All camera configurations failed</strong><br>
+                    Please try using the upload feature instead.
+                </div>
+            `;
+        }
+
+        // Stop camera
+        function stopCamera() {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                currentStream = null;
+                video.srcObject = null;
+                video.style.display = 'none';
+                results.innerHTML = '<div class="status info"><strong>⏹️ Camera stopped</strong></div>';
+            }
+        }
+
+        // Initialize
+        displayDeviceInfo();
+        checkCompatibility();
+        listDevices();
+        
+        // Handle page unload
+        window.addEventListener('beforeunload', stopCamera);
+    </script>
+</body>
+</html>

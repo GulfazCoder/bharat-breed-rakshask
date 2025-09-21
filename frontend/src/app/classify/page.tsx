@@ -83,33 +83,89 @@ export default function ClassificationPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Camera functions
+  // Check if we're in a secure context for camera access
+  const isSecureContext = () => {
+    return window.isSecureContext || window.location.protocol === 'https:' || window.location.hostname === 'localhost';
+  };
+
+  // Check if device supports camera
+  const isCameraSupported = () => {
+    return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+  };
+
+  // Detect mobile device
+  const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+           (window.innerWidth <= 768 && 'ontouchstart' in window);
+  };
+
+  // Camera functions with enhanced mobile and network support
   const startCamera = async () => {
     try {
       setError(null);
       
-      // Log available devices for debugging
+      // Check browser compatibility first
+      if (!isCameraSupported()) {
+        throw new Error('Camera is not supported in this browser. Please try a modern browser like Chrome, Firefox, or Safari.');
+      }
+
+      // Check secure context for network access
+      if (!isSecureContext()) {
+        throw new Error('Camera access requires a secure connection (HTTPS). Please use HTTPS or access via localhost.');
+      }
+      
+      // Log device information for debugging
+      console.log('Device info:', {
+        isMobile: isMobileDevice(),
+        isSecure: isSecureContext(),
+        userAgent: navigator.userAgent,
+        protocol: window.location.protocol
+      });
+      
+      // Try to enumerate devices first (helps with permissions)
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
         const videoDevices = devices.filter(device => device.kind === 'videoinput');
         console.log('Available video devices:', videoDevices.length);
-        videoDevices.forEach((device, index) => {
-          console.log(`Camera ${index + 1}: ${device.label || 'Unknown Camera'}`);
-        });
+        
+        if (videoDevices.length === 0) {
+          // Still proceed as some browsers don't show devices until permission is granted
+          console.warn('No cameras detected, but continuing anyway (may be permission related)');
+        }
       } catch (enumError) {
         console.warn('Could not enumerate devices:', enumError);
       }
       
-      // Check if getUserMedia is supported
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error('Camera API not supported in this browser');
-      }
-      
       let stream;
+      const isMobile = isMobileDevice();
       
-      // Try different camera configurations for laptop compatibility
-      const cameraConfigs = [
-        // First try: Any available camera (works better on laptops)
+      // Different camera configurations for mobile vs desktop
+      const cameraConfigs = isMobile ? [
+        // Mobile-optimized configurations
+        {
+          video: {
+            facingMode: 'environment', // Back camera for better livestock photos
+            width: { ideal: 1920, min: 720 },
+            height: { ideal: 1080, min: 480 },
+            frameRate: { ideal: 30, min: 15 }
+          }
+        },
+        {
+          video: {
+            facingMode: 'user', // Front camera fallback
+            width: { ideal: 1280, min: 640 },
+            height: { ideal: 720, min: 480 }
+          }
+        },
+        {
+          video: {
+            width: { ideal: 1280, min: 480 },
+            height: { ideal: 720, min: 320 }
+          }
+        },
+        { video: true } // Basic fallback
+      ] : [
+        // Desktop configurations
         {
           video: {
             width: { ideal: 1280, min: 640 },
@@ -117,43 +173,64 @@ export default function ClassificationPage() {
             frameRate: { ideal: 30, min: 15 }
           }
         },
-        // Second try: Basic video only
-        {
-          video: true
-        },
-        // Third try: Specific camera if available
         {
           video: {
-            facingMode: 'user', // Front camera (more common on laptops)
+            facingMode: 'user',
             width: { ideal: 640 },
             height: { ideal: 480 }
           }
-        }
+        },
+        { video: true }
       ];
       
       // Try each configuration until one works
-      for (const config of cameraConfigs) {
+      for (let i = 0; i < cameraConfigs.length; i++) {
+        const config = cameraConfigs[i];
         try {
+          console.log(`Trying camera config ${i + 1}:`, config);
           stream = await navigator.mediaDevices.getUserMedia(config);
+          console.log(`Camera config ${i + 1} successful!`);
           break;
-        } catch (configError) {
-          console.warn('Camera config failed:', config, configError);
+        } catch (configError: any) {
+          console.warn(`Camera config ${i + 1} failed:`, configError);
+          
+          // If it's a permission error, don't try other configs
+          if (configError.name === 'NotAllowedError' || configError.name === 'PermissionDeniedError') {
+            throw configError;
+          }
           continue;
         }
       }
       
       if (!stream) {
-        throw new Error('Unable to access any camera configuration');
+        throw new Error('Unable to access camera with any configuration');
       }
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        videoRef.current.setAttribute('playsinline', 'true'); // Important for iOS
+        videoRef.current.setAttribute('muted', 'true'); // Required for autoplay on mobile
         
         // Wait for video to be ready
         videoRef.current.onloadedmetadata = () => {
-          videoRef.current?.play();
-          setIsCameraActive(true);
-          toast.success(t('cameraReady') + ' 📸');
+          if (videoRef.current) {
+            const playPromise = videoRef.current.play();
+            
+            if (playPromise !== undefined) {
+              playPromise
+                .then(() => {
+                  setIsCameraActive(true);
+                  toast.success('Camera ready! 📸');
+                })
+                .catch((playError) => {
+                  console.error('Play failed:', playError);
+                  setError('Failed to start video playback. Please try again.');
+                });
+            } else {
+              setIsCameraActive(true);
+              toast.success('Camera ready! 📸');
+            }
+          }
         };
         
         // Handle video errors
@@ -167,22 +244,35 @@ export default function ClassificationPage() {
     } catch (error: any) {
       console.error('Camera error:', error);
       
-      // Provide specific error messages
+      // Provide specific error messages with solutions
       let errorMessage = 'Unable to access camera.';
+      let solution = '';
       
       if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-        errorMessage = 'Camera permission denied. Please allow camera access and try again.';
+        errorMessage = 'Camera permission denied.';
+        solution = isMobileDevice() 
+          ? 'Please allow camera access in your browser settings and refresh the page.'
+          : 'Please click "Allow" when prompted for camera permission.';
       } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
-        errorMessage = 'No camera found. Please connect a camera and try again.';
+        errorMessage = 'No camera found.';
+        solution = isMobileDevice()
+          ? 'Please ensure your device has a working camera.'
+          : 'Please connect a camera and try again.';
       } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
-        errorMessage = 'Camera is already in use by another application.';
+        errorMessage = 'Camera is busy.';
+        solution = 'Please close other applications using the camera and try again.';
       } else if (error.name === 'OverconstrainedError' || error.name === 'ConstraintNotSatisfiedError') {
-        errorMessage = 'Camera does not support the required settings.';
+        errorMessage = 'Camera settings not supported.';
+        solution = 'Your camera doesn\'t support the required settings. Try using the upload feature instead.';
+      } else if (error.message.includes('secure')) {
+        errorMessage = 'Secure connection required.';
+        solution = 'Camera access requires HTTPS. Please access this page via HTTPS or use localhost.';
       } else if (error.message) {
         errorMessage = error.message;
       }
       
-      setError(errorMessage);
+      const fullError = solution ? `${errorMessage} ${solution}` : errorMessage;
+      setError(fullError);
       toast.error(errorMessage);
       setIsCameraActive(false);
     }
@@ -523,6 +613,51 @@ export default function ClassificationPage() {
                         </div>
                       </CardContent>
                     </Card>
+
+                    {/* Mobile & Network Access Information */}
+                    {(!isSecureContext() || !isCameraSupported()) && (
+                      <Alert className="border-amber-200 bg-amber-50">
+                        <Info className="h-4 w-4 text-amber-600" />
+                        <AlertDescription className="text-amber-800">
+                          <div className="space-y-2">
+                            <p className="font-medium">📱 Camera Access Information:</p>
+                            <ul className="text-sm space-y-1 ml-4">
+                              {!isSecureContext() && (
+                                <li>• <strong>HTTPS Required:</strong> Camera access needs a secure connection for network devices. Use localhost or HTTPS.</li>
+                              )}
+                              {!isCameraSupported() && (
+                                <li>• <strong>Browser Support:</strong> Please use a modern browser (Chrome, Firefox, Safari, Edge).</li>
+                              )}
+                              {isMobileDevice() && (
+                                <li>• <strong>Mobile Users:</strong> Ensure camera permissions are enabled in browser settings.</li>
+                              )}
+                              <li>• <strong>Alternative:</strong> You can always upload a photo from your device gallery using the upload button.</li>
+                            </ul>
+                          </div>
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
+                    {/* Network Access Instructions */}
+                    {window.location.hostname !== 'localhost' && window.location.protocol === 'http:' && (
+                      <Alert className="border-blue-200 bg-blue-50">
+                        <Info className="h-4 w-4 text-blue-600" />
+                        <AlertDescription className="text-blue-800">
+                          <div className="space-y-2">
+                            <p className="font-medium">🌐 For Network Device Access:</p>
+                            <div className="text-sm space-y-1">
+                              <p>To use the camera from other devices on your network:</p>
+                              <ol className="ml-4 space-y-1">
+                                <li>1. Stop the current server</li>
+                                <li>2. Run: <code className="bg-white px-1 rounded">npm run generate-certs</code></li>
+                                <li>3. Run: <code className="bg-white px-1 rounded">npm run dev:https</code></li>
+                                <li>4. Access via: <code className="bg-white px-1 rounded">https://YOUR_IP:3443</code></li>
+                              </ol>
+                            </div>
+                          </div>
+                        </AlertDescription>
+                      </Alert>
+                    )}
                   </div>
                 )}
               </div>
