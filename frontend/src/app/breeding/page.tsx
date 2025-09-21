@@ -1,12 +1,18 @@
 'use client';
 
 import React from 'react';
-import { ArrowLeft, Calendar, Plus, Clock } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowLeft, Calendar, Plus, Clock, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useNotificationReminders } from '@/hooks/useNotificationReminders';
+import { toast } from 'sonner';
 
 const BreedingPage: React.FC = () => {
+  // Initialize notification reminders
+  const { notifications, unreadCount, markAsRead } = useNotificationReminders();
+  
   // Mock data for demonstration
   const upcomingEvents = [
     {
@@ -49,9 +55,41 @@ const BreedingPage: React.FC = () => {
             </Button>
             <h1 className="text-xl font-bold text-foreground">Breeding</h1>
           </div>
-          <Button size="icon" className="rounded-full">
-            <Plus className="w-5 h-5" />
-          </Button>
+          <div className="flex items-center space-x-2">
+            {/* Notification Bell */}
+            {unreadCount > 0 && (
+              <Button 
+                variant="outline" 
+                size="icon"
+                className="relative"
+                onClick={() => {
+                  // Show recent notifications in a toast
+                  const recentNotifications = notifications
+                    .filter(n => !n.read)
+                    .slice(0, 3)
+                    .map(n => `• ${n.title}: ${n.message}`)
+                    .join('\n');
+                  
+                  if (recentNotifications) {
+                    toast.info(`Recent Reminders:\n${recentNotifications}`);
+                    
+                    // Mark displayed notifications as read
+                    notifications.filter(n => !n.read).slice(0, 3).forEach(n => {
+                      markAsRead(n.id);
+                    });
+                  }
+                }}
+              >
+                <Bell className="w-4 h-4" />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              </Button>
+            )}
+            <Button size="icon" className="rounded-full">
+              <Plus className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -158,18 +196,22 @@ const BreedingPage: React.FC = () => {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-4">
-          <Button variant="outline" className="accessibility-button h-auto py-4">
-            <div className="text-center">
-              <Calendar className="w-6 h-6 mx-auto mb-2" />
-              <div>Schedule Breeding</div>
-            </div>
-          </Button>
-          <Button variant="outline" className="accessibility-button h-auto py-4">
-            <div className="text-center">
-              <Plus className="w-6 h-6 mx-auto mb-2" />
-              <div>Add Record</div>
-            </div>
-          </Button>
+          <Link href="/breeding/calendar">
+            <Button variant="outline" className="accessibility-button h-auto py-4 w-full">
+              <div className="text-center">
+                <Calendar className="w-6 h-6 mx-auto mb-2" />
+                <div>View Calendar</div>
+              </div>
+            </Button>
+          </Link>
+          <Link href="/breeding/add">
+            <Button variant="outline" className="accessibility-button h-auto py-4 w-full">
+              <div className="text-center">
+                <Plus className="w-6 h-6 mx-auto mb-2" />
+                <div>Add Record</div>
+              </div>
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

@@ -208,17 +208,13 @@ export interface VeterinaryContact {
 // Notification Types
 export interface Notification {
   id: string;
-  userId: string;
-  type: 'Breeding' | 'Health' | 'Vaccination' | 'General';
   title: string;
-  titleHi?: string;
   message: string;
-  messageHi?: string;
-  animalId?: string;
-  scheduledFor: Date;
-  sent: boolean;
+  type: 'info' | 'warning' | 'error' | 'success';
   read: boolean;
-  createdAt: Date;
+  createdAt: string;
+  relatedId?: string;
+  relatedType?: string;
 }
 
 // API Response Types
@@ -302,9 +298,31 @@ export interface BreedsState {
   error: string | null;
 }
 
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  type: 'breeding' | 'vaccination' | 'checkup' | 'delivery';
+  animalId: string;
+  animalName: string;
+  description?: string;
+  notificationEnabled?: boolean;
+}
+
 export interface BreedingState {
   breedingRecords: BreedingRecord[];
   upcomingEvents: BreedingRecord[];
+  calendarEvents: CalendarEvent[];
+  selectedEvent: CalendarEvent | null;
+  filters: {
+    eventType: string;
+    animalId: string;
+    dateRange: {
+      start: Date | null;
+      end: Date | null;
+    };
+  };
   loading: boolean;
   error: string | null;
 }

@@ -7,7 +7,7 @@ import {
   LayoutDashboard, 
   Camera, 
   User, 
-  Calendar
+  MoreHorizontal
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NavigationItem } from '@/lib/types';
@@ -40,11 +40,11 @@ const navigationItems: NavigationItem[] = [
     path: '/profile',
   },
   {
-    id: 'reproduction',
-    label: 'Breeding',
-    labelHi: 'प्रजनन',
-    icon: Calendar,
-    path: '/breeding',
+    id: 'more',
+    label: 'More',
+    labelHi: 'अधिक',
+    icon: MoreHorizontal,
+    path: '/more',
   },
 ];
 

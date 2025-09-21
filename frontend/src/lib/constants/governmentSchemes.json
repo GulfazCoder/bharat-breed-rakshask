@@ -1,0 +1,228 @@
+[
+  {
+    "id": "1",
+    "name": "Rashtriya Gokul Mission",
+    "nameHi": "राष्ट्रीय गोकुल मिशन",
+    "description": "National mission for development and conservation of indigenous breeds through selective breeding",
+    "descriptionHi": "चुनिंदा प्रजनन के माध्यम से स्वदेशी नस्लों के विकास और संरक्षण के लिए राष्ट्रीय मिशन",
+    "eligibility": [
+      "Individual farmers with cattle/buffalo",
+      "Farmer Producer Organizations (FPOs)",
+      "Self Help Groups (SHGs)",
+      "Cooperatives"
+    ],
+    "benefits": [
+      "Financial assistance for breed improvement",
+      "Artificial insemination services",
+      "Training programs",
+      "Equipment subsidies"
+    ],
+    "applicationProcess": "Apply through Animal Husbandry Department",
+    "contactInfo": "Contact District Animal Husbandry Officer",
+    "category": "Breeding",
+    "isActive": true
+  },
+  {
+    "id": "2", 
+    "name": "National Livestock Insurance Scheme",
+    "nameHi": "राष्ट्रीय पशुधन बीमा योजना",
+    "description": "Insurance coverage for cattle and buffalo against death due to disease, accident, etc.",
+    "descriptionHi": "बीमारी, दुर्घटना आदि के कारण मृत्यु के खिलाफ गाय और भैंस के लिए बीमा कवरेज",
+    "eligibility": [
+      "Individual farmers owning cattle/buffalo",
+      "Animals should be healthy and between 1-8 years of age",
+      "Maximum 10 animals per farmer"
+    ],
+    "benefits": [
+      "Insurance coverage up to market value",
+      "Premium subsidy of 50% for general farmers",
+      "Premium subsidy of 75% for SC/ST farmers",
+      "Quick claim settlement"
+    ],
+    "applicationProcess": "Apply through nearest bank or insurance company",
+    "contactInfo": "Contact local bank branch or insurance agent",
+    "category": "Insurance",
+    "isActive": true
+  },
+  {
+    "id": "3",
+    "name": "Dairy Entrepreneurship Development Scheme",
+    "nameHi": "डेयरी उद्यमिता विकास योजना",
+    "description": "Financial assistance for setting up dairy farms and milk processing units",
+    "descriptionHi": "डेयरी फार्म और दूध प्रसंस्करण इकाइयों की स्थापना के लिए वित्तीय सहायता",
+    "eligibility": [
+      "Individual entrepreneurs",
+      "Self Help Groups",
+      "Farmer Producer Organizations",
+      "Dairy Cooperatives"
+    ],
+    "benefits": [
+      "Bank loan with 25% subsidy",
+      "Training and technical support",
+      "Marketing assistance",
+      "Quality certification support"
+    ],
+    "applicationProcess": "Apply through NABARD or designated banks",
+    "contactInfo": "Contact NABARD District Development Manager",
+    "category": "Subsidy",
+    "isActive": true
+  },
+  {
+    "id": "4",
+    "name": "Pashu Kisan Credit Card",
+    "nameHi": "पशु किसान क्रेडिट कार्ड",
+    "description": "Credit facility for animal husbandry activities without collateral",
+    "descriptionHi": "बिना गारंटी के पशुपालन गतिविधियों के लिए ऋण सुविधा",
+    "eligibility": [
+      "Farmers owning dairy animals",
+      "Good credit history",
+      "Valid identity documents",
+      "Animal ownership proof"
+    ],
+    "benefits": [
+      "Loan up to Rs. 1.6 lakh per animal",
+      "4% interest rate subsidy",
+      "Flexible repayment terms",
+      "No processing fee"
+    ],
+    "applicationProcess": "Apply at nearest bank branch",
+    "contactInfo": "Visit your bank branch",
+    "category": "Insurance",
+    "isActive": true
+  },
+  {
+    "id": "5",
+    "name": "National Programme for Bovine Breeding",
+    "nameHi": "राष्ट्रीय गोजातीय प्रजनन कार्यक्रम",
+    "description": "Genetic improvement of bovine population through artificial insemination",
+    "descriptionHi": "कृत्रिम गर्भाधान के माध्यम से गोजातीय आबादी का आनुवंशिक सुधार",
+    "eligibility": [
+      "All cattle and buffalo owners",
+      "No specific eligibility criteria",
+      "Animals should be in breeding age"
+    ],
+    "benefits": [
+      "Subsidized artificial insemination",
+      "Quality semen supply",
+      "Pregnancy diagnosis services",
+      "Technical training"
+    ],
+    "applicationProcess": "Contact local veterinary officer",
+    "contactInfo": "District Animal Husbandry Department",
+    "category": "Breeding",
+    "isActive": true
+  },
+  {
+    "id": "6",
+    "name": "Animal Health Programme",
+    "nameHi": "पशु स्वास्थ्य कार्यक्रम",
+    "description": "Comprehensive health care and disease prevention for livestock",
+    "descriptionHi": "पशुधन के लिए व्यापक स्वास्थ्य देखभाल और रोग की रोकथाम",
+    "eligibility": [
+      "All livestock owners",
+      "No income restriction",
+      "Valid animal registration"
+    ],
+    "benefits": [
+      "Free vaccination programs",
+      "Subsidized treatment",
+      "Emergency veterinary services",
+      "Disease surveillance"
+    ],
+    "applicationProcess": "Contact local veterinary dispensary",
+    "contactInfo": "Nearest veterinary hospital",
+    "category": "Health",
+    "isActive": true
+  },
+  {
+    "id": "7",
+    "name": "Skill Development in Animal Husbandry",
+    "nameHi": "पशुपालन में कौशल विकास",
+    "description": "Training programs for farmers to improve animal husbandry practices",
+    "descriptionHi": "पशुपालन प्रथाओं में सुधार के लिए किसानों के लिए प्रशिक्षण कार्यक्रम",
+    "eligibility": [
+      "Farmers and rural youth",
+      "Age 18-45 years",
+      "Basic literacy required"
+    ],
+    "benefits": [
+      "Free training programs",
+      "Skill certification",
+      "Employment assistance",
+      "Financial incentives during training"
+    ],
+    "applicationProcess": "Register through Skill Development Centers",
+    "contactInfo": "District Skill Development Office",
+    "category": "Training",
+    "isActive": true
+  },
+  {
+    "id": "8",
+    "name": "Feed and Fodder Development Programme",
+    "nameHi": "चारा और आहार विकास कार्यक्रम",
+    "description": "Support for establishing feed processing units and fodder cultivation",
+    "descriptionHi": "फ़ीड प्रसंस्करण इकाइयों की स्थापना और चारा खेती के लिए सहायता",
+    "eligibility": [
+      "Individual farmers",
+      "Farmer collectives",
+      "Rural entrepreneurs",
+      "Dairy cooperatives"
+    ],
+    "benefits": [
+      "Subsidy on feed processing equipment",
+      "Quality seed supply",
+      "Technical guidance",
+      "Marketing support"
+    ],
+    "applicationProcess": "Apply through Agriculture Department",
+    "contactInfo": "District Agriculture Officer",
+    "category": "Subsidy",
+    "isActive": true
+  },
+  {
+    "id": "9",
+    "name": "Dairy Processing & Infrastructure Development Fund",
+    "nameHi": "डेयरी प्रसंस्करण और अवसंरचना विकास फंड",
+    "description": "Financial support for creating modern dairy infrastructure",
+    "descriptionHi": "आधुनिक डेयरी अवसंरचना के निर्माण के लिए वित्तीय सहायता",
+    "eligibility": [
+      "Dairy cooperatives",
+      "Private dairy companies",
+      "Producer companies",
+      "Individual entrepreneurs with minimum investment"
+    ],
+    "benefits": [
+      "Low-interest loans",
+      "Infrastructure development support",
+      "Technology upgradation assistance",
+      "Export promotion support"
+    ],
+    "applicationProcess": "Apply through NABARD",
+    "contactInfo": "NABARD Regional Office",
+    "category": "Subsidy",
+    "isActive": true
+  },
+  {
+    "id": "10",
+    "name": "Integrated Development of Small Ruminants and Rabbits",
+    "nameHi": "छोटे जुगाली करने वाले और खरगोश का एकीकृत विकास",
+    "description": "Development program for goats, sheep and rabbit rearing",
+    "descriptionHi": "बकरी, भेड़ और खरगोश पालन के लिए विकास कार्यक्रम",
+    "eligibility": [
+      "Small and marginal farmers",
+      "Women farmers preferred",
+      "Landless agricultural laborers",
+      "SC/ST farmers given priority"
+    ],
+    "benefits": [
+      "Financial assistance for animal purchase",
+      "Shed construction subsidy",
+      "Training and capacity building",
+      "Veterinary support"
+    ],
+    "applicationProcess": "Apply through District Collector Office",
+    "contactInfo": "Block Development Office",
+    "category": "Subsidy",
+    "isActive": true
+  }
+]

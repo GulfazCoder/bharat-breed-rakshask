@@ -1,0 +1,392 @@
+[
+  {
+    "id": "1",
+    "title": "Daily Health Monitoring",
+    "titleHi": "दैनिक स्वास्थ्य निगरानी",
+    "category": "General Care",
+    "categoryHi": "सामान्य देखभाल",
+    "description": "Essential daily checks to ensure your cattle remain healthy and productive",
+    "descriptionHi": "अपनी गाय को स्वस्थ और उत्पादक बनाए रखने के लिए आवश्यक दैनिक जांच",
+    "content": "Monitor your cattle daily for signs of illness or distress. Check their eyes for clarity, nose for discharge, and overall behavior. Observe their eating patterns, milk production (for dairy cattle), and general activity levels. Early detection of health issues can prevent serious complications.",
+    "contentHi": "अपनी गायों की बीमारी या परेशानी के संकेतों के लिए दैनिक निगरानी करें। उनकी आंखों की स्पष्टता, नाक से स्राव और समग्र व्यवहार की जांच करें। उनके खाने के पैटर्न, दूध उत्पादन (डेयरी मवेशियों के लिए), और सामान्य गतिविधि स्तरों का निरीक्षण करें।",
+    "tips": [
+      "Check eyes for clarity and discharge",
+      "Monitor eating and drinking patterns",
+      "Observe behavioral changes",
+      "Record daily milk production",
+      "Check for lameness or mobility issues"
+    ],
+    "tipsHi": [
+      "आंखों की स्पष्टता और स्राव की जांच करें",
+      "खाने और पीने के पैटर्न की निगरानी करें",
+      "व्यवहारिक बदलावों का निरीक्षण करें",
+      "दैनिक दूध उत्पादन रिकॉर्ड करें",
+      "लंगड़ाहट या गतिशीलता की समस्याओं की जांच करें"
+    ],
+    "warningSigns": [
+      "Loss of appetite",
+      "Reduced milk production",
+      "Unusual discharge",
+      "Behavioral changes",
+      "Temperature variations"
+    ],
+    "priority": "high",
+    "season": "all",
+    "applicableBreeds": ["all"],
+    "imageUrl": "/images/health-tips/daily-monitoring.jpg",
+    "videoUrl": null,
+    "createdAt": "2024-01-15T00:00:00.000Z",
+    "updatedAt": "2024-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "title": "Proper Nutrition Management",
+    "titleHi": "उचित पोषण प्रबंधन",
+    "category": "Nutrition",
+    "categoryHi": "पोषण",
+    "description": "Guidelines for maintaining optimal nutrition for cattle health and productivity",
+    "descriptionHi": "मवेशी स्वास्थ्य और उत्पादकता के लिए इष्टतम पोषण बनाए रखने के लिए दिशानिर्देश",
+    "content": "Provide a balanced diet with adequate roughage, concentrates, and clean water. Ensure proper mineral supplementation and adjust feeding based on production stage, weather conditions, and body condition.",
+    "contentHi": "पर्याप्त चारा, सांद्रता और स्वच्छ पानी के साथ एक संतुलित आहार प्रदान करें। उचित खनिज पूरकता सुनिश्चित करें और उत्पादन चरण, मौसम की स्थिति और शरीर की स्थिति के आधार पर भोजन को समायोजित करें।",
+    "tips": [
+      "Provide 30-50 kg fresh fodder daily",
+      "Ensure 2-4 kg concentrate feed based on milk production",
+      "Maintain clean water availability (40-60 liters daily)",
+      "Add mineral mixture (50-100g daily)",
+      "Monitor body condition score regularly"
+    ],
+    "tipsHi": [
+      "दैनिक 30-50 किग्रा ताज़ा चारा प्रदान करें",
+      "दूध उत्पादन के आधार पर 2-4 किग्रा सांद्र आहार सुनिश्चित करें",
+      "स्वच्छ पानी की उपलब्धता बनाए रखें (दैनिक 40-60 लीटर)",
+      "खनिज मिश्रण जोड़ें (दैनिक 50-100 ग्राम)",
+      "नियमित रूप से शरीर की स्थिति स्कोर की निगरानी करें"
+    ],
+    "warningSigns": [
+      "Poor body condition",
+      "Reduced feed intake",
+      "Digestive disorders",
+      "Mineral deficiency symptoms",
+      "Irregular milk production"
+    ],
+    "priority": "high",
+    "season": "all",
+    "applicableBreeds": ["all"],
+    "imageUrl": "/images/health-tips/nutrition.jpg",
+    "videoUrl": null,
+    "createdAt": "2024-01-15T00:00:00.000Z",
+    "updatedAt": "2024-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "title": "Vaccination Schedule",
+    "titleHi": "टीकाकरण अनुसूची",
+    "category": "Preventive Care",
+    "categoryHi": "निवारक देखभाल",
+    "description": "Essential vaccination program to prevent major cattle diseases",
+    "descriptionHi": "प्रमुख मवेशी रोगों को रोकने के लिए आवश्यक टीकाकरण कार्यक्रम",
+    "content": "Follow a systematic vaccination schedule to protect cattle from major diseases like FMD, HS, BQ, IBR, and others. Maintain vaccination records and consult with veterinarians for region-specific requirements.",
+    "contentHi": "FMD, HS, BQ, IBR आदि जैसी प्रमुख बीमारियों से मवेशियों की रक्षा के लिए एक व्यवस्थित टीकाकरण अनुसूची का पालन करें। टीकाकरण रिकॉर्ड बनाए रखें और क्षेत्र-विशिष्ट आवश्यकताओं के लिए पशु चिकित्सकों से सलाह लें।",
+    "tips": [
+      "FMD vaccine every 6 months",
+      "HS and BQ vaccines annually",
+      "IBR and PI3 vaccines as per vet advice",
+      "Maintain cold chain for vaccines",
+      "Keep detailed vaccination records"
+    ],
+    "tipsHi": [
+      "हर 6 महीने में FMD वैक्सीन",
+      "वार्षिक रूप से HS और BQ वैक्सीन",
+      "पशु चिकित्सक की सलाह के अनुसार IBR और PI3 वैक्सीन",
+      "वैक्सीन के लिए कोल्ड चेन बनाए रखें",
+      "विस्तृत टीकाकरण रिकॉर्ड रखें"
+    ],
+    "warningSigns": [
+      "Fever after vaccination",
+      "Swelling at injection site",
+      "Reduced appetite post-vaccination",
+      "Unusual lethargy",
+      "Allergic reactions"
+    ],
+    "priority": "high",
+    "season": "all",
+    "applicableBreeds": ["all"],
+    "imageUrl": "/images/health-tips/vaccination.jpg",
+    "videoUrl": null,
+    "createdAt": "2024-01-15T00:00:00.000Z",
+    "updatedAt": "2024-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "4",
+    "title": "Heat Stress Management",
+    "titleHi": "गर्मी तनाव प्रबंधन",
+    "category": "Seasonal Care",
+    "categoryHi": "मौसमी देखभाल",
+    "description": "Managing cattle comfort during hot weather to maintain productivity",
+    "descriptionHi": "उत्पादकता बनाए रखने के लिए गर्म मौसम में मवेशी आराम का प्रबंधन",
+    "content": "Provide adequate shade, ventilation, and cooling systems during hot weather. Adjust feeding schedules and ensure constant access to fresh water. Monitor for heat stress symptoms and take preventive measures.",
+    "contentHi": "गर्म मौसम में पर्याप्त छाया, वेंटिलेशन और कूलिंग सिस्टम प्रदान करें। भोजन की अनुसूची को समायोजित करें और ताजे पानी तक निरंतर पहुंच सुनिश्चित करें। गर्मी तनाव के लक्षणों की निगरानी करें और निवारक उपाय करें।",
+    "tips": [
+      "Provide shade covering 3-4 sq meters per animal",
+      "Install fans or misters in cattle sheds",
+      "Adjust feeding to cooler parts of the day",
+      "Increase water intake (up to 80 liters in summer)",
+      "Monitor respiration rate (normal: 20-30 breaths/minute)"
+    ],
+    "tipsHi": [
+      "प्रति पशु 3-4 वर्ग मीटर छाया प्रदान करें",
+      "मवेशी शेड में पंखे या मिस्टर स्थापित करें",
+      "दिन के ठंडे हिस्सों में भोजन को समायोजित करें",
+      "पानी का सेवन बढ़ाएं (गर्मियों में 80 लीटर तक)",
+      "श्वसन दर की निगरानी करें (सामान्य: 20-30 सांस/मिनट)"
+    ],
+    "warningSigns": [
+      "Rapid breathing (>60 breaths/minute)",
+      "Excessive drooling",
+      "Reduced feed intake",
+      "Lethargy and weakness",
+      "Drop in milk production"
+    ],
+    "priority": "high",
+    "season": "summer",
+    "applicableBreeds": ["all"],
+    "imageUrl": "/images/health-tips/heat-stress.jpg",
+    "videoUrl": null,
+    "createdAt": "2024-01-15T00:00:00.000Z",
+    "updatedAt": "2024-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "5",
+    "title": "Mastitis Prevention",
+    "titleHi": "मैस्टाइटिस रोकथाम",
+    "category": "Dairy Management",
+    "categoryHi": "डेयरी प्रबंधन",
+    "description": "Preventing udder infections to maintain milk quality and cattle health",
+    "descriptionHi": "दूध की गुणवत्ता और मवेशी स्वास्थ्य बनाए रखने के लिए थन संक्रमण को रोकना",
+    "content": "Maintain proper milking hygiene, teat disinfection, and dry cow management to prevent mastitis. Regular monitoring and early treatment are essential for udder health.",
+    "contentHi": "मैस्टाइटिस को रोकने के लिए उचित दूध दोहन स्वच्छता, टीट कीटाणुशोधन और सूखी गाय प्रबंधन बनाए रखें। थन स्वास्थ्य के लिए नियमित निगरानी और जल्दी उपचार आवश्यक है।",
+    "tips": [
+      "Clean teats before and after milking",
+      "Use teat dips with iodine or chlorine",
+      "Maintain clean milking environment",
+      "Check for early signs during milking",
+      "Implement dry cow therapy"
+    ],
+    "tipsHi": [
+      "दूध दोहन से पहले और बाद में टीट साफ करें",
+      "आयोडीन या क्लोरीन के साथ टीट डिप का उपयोग करें",
+      "साफ दूध दोहन पर्यावरण बनाए रखें",
+      "दूध दोहन के दौरान शुरुआती संकेतों की जांच करें",
+      "सूखी गाय थेरेपी लागू करें"
+    ],
+    "warningSigns": [
+      "Swollen or hot udder",
+      "Changes in milk color or consistency",
+      "Reduced milk production",
+      "Pain during milking",
+      "Fever or systemic illness"
+    ],
+    "priority": "high",
+    "season": "all",
+    "applicableBreeds": ["dairy"],
+    "imageUrl": "/images/health-tips/mastitis.jpg",
+    "videoUrl": null,
+    "createdAt": "2024-01-15T00:00:00.000Z",
+    "updatedAt": "2024-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "6",
+    "title": "Deworming Schedule",
+    "titleHi": "कृमि मुक्ति अनुसूची",
+    "category": "Preventive Care",
+    "categoryHi": "निवारक देखभाल",
+    "description": "Regular deworming program to control internal and external parasites",
+    "descriptionHi": "आंतरिक और बाहरी परजीवियों को नियंत्रित करने के लिए नियमित कृमि मुक्ति कार्यक्रम",
+    "content": "Implement strategic deworming based on fecal egg counts, seasonal patterns, and veterinary recommendations. Rotate dewormers to prevent resistance development.",
+    "contentHi": "मल अंडे की गिनती, मौसमी पैटर्न और पशु चिकित्सा सिफारिशों के आधार पर रणनीतिक कृमि मुक्ति लागू करें। प्रतिरोध विकास को रोकने के लिए कृमि नाशकों का रोटेशन करें।",
+    "tips": [
+      "Deworm every 3-6 months or as per FEC results",
+      "Use broad-spectrum anthelmintics",
+      "Rotate different classes of dewormers",
+      "Monitor for external parasites (ticks, flies)",
+      "Maintain clean and dry housing"
+    ],
+    "tipsHi": [
+      "हर 3-6 महीने में या FEC परिणामों के अनुसार कृमि मुक्ति करें",
+      "व्यापक-स्पेक्ट्रम एंथेलमिंटिक का उपयोग करें",
+      "विभिन्न श्रेणियों के कृमि नाशकों का रोटेशन करें",
+      "बाहरी परजीवियों (टिक्स, मक्खियों) की निगरानी करें",
+      "साफ और सूखे आवास बनाए रखें"
+    ],
+    "warningSigns": [
+      "Poor body condition despite good feeding",
+      "Diarrhea or loose stools",
+      "Reduced growth rate",
+      "Anemia (pale mucous membranes)",
+      "Heavy tick or fly infestation"
+    ],
+    "priority": "medium",
+    "season": "all",
+    "applicableBreeds": ["all"],
+    "imageUrl": "/images/health-tips/deworming.jpg",
+    "videoUrl": null,
+    "createdAt": "2024-01-15T00:00:00.000Z",
+    "updatedAt": "2024-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "7",
+    "title": "Breeding Management",
+    "titleHi": "प्रजनन प्रबंधन",
+    "category": "Reproduction",
+    "categoryHi": "प्रजनन",
+    "description": "Optimal breeding practices for improved reproductive performance",
+    "descriptionHi": "बेहतर प्रजनन प्रदर्शन के लिए इष्टतम प्रजनन प्रथाएं",
+    "content": "Monitor heat cycles, maintain proper body condition, and time breeding appropriately. Use quality semen from approved sources and maintain breeding records.",
+    "contentHi": "गर्मी चक्रों की निगरानी करें, उचित शरीर की स्थिति बनाए रखें, और उपयुक्त समय पर प्रजनन करें। अनुमोदित स्रोतों से गुणवत्तापूर्ण वीर्य का उपयोग करें और प्रजनन रिकॉर्ड बनाए रखें।",
+    "tips": [
+      "Maintain body condition score 3-3.5",
+      "Observe heat signs carefully",
+      "Breed 12-18 hours after heat onset",
+      "Use certified semen from approved centers",
+      "Maintain detailed breeding records"
+    ],
+    "tipsHi": [
+      "शरीर की स्थिति स्कोर 3-3.5 बनाए रखें",
+      "गर्मी के संकेतों का ध्यान से निरीक्षण करें",
+      "गर्मी शुरू होने के 12-18 घंटे बाद प्रजनन करें",
+      "अनुमोदित केंद्रों से प्रमाणित वीर्य का उपयोग करें",
+      "विस्तृत प्रजनन रिकॉर्ड बनाए रखें"
+    ],
+    "warningSigns": [
+      "Irregular or absent heat cycles",
+      "Repeated failures to conceive",
+      "Abnormal vaginal discharge",
+      "Poor body condition",
+      "Prolonged calving intervals"
+    ],
+    "priority": "high",
+    "season": "all",
+    "applicableBreeds": ["all"],
+    "imageUrl": "/images/health-tips/breeding.jpg",
+    "videoUrl": null,
+    "createdAt": "2024-01-15T00:00:00.000Z",
+    "updatedAt": "2024-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "8",
+    "title": "Calf Care Management",
+    "titleHi": "बछड़े की देखभाल प्रबंधन",
+    "category": "Young Stock",
+    "categoryHi": "युवा पशु",
+    "description": "Essential care practices for newborn calves and growing young stock",
+    "descriptionHi": "नवजात बछड़ों और बढ़ते युवा पशुओं के लिए आवश्यक देखभाल प्रथाएं",
+    "content": "Ensure colostrum feeding within 6 hours of birth, maintain proper hygiene, and provide appropriate nutrition and housing for optimal calf growth and development.",
+    "contentHi": "जन्म के 6 घंटे के भीतर कोलोस्ट्रम खिलाना सुनिश्चित करें, उचित स्वच्छता बनाए रखें, और इष्टतम बछड़े की वृद्धि और विकास के लिए उपयुक्त पोषण और आवास प्रदान करें।",
+    "tips": [
+      "Feed colostrum within 6 hours (4-6 liters)",
+      "Maintain clean and dry calf housing",
+      "Provide calf starter feed from 1 week",
+      "Fresh water available from day 3",
+      "Separate housing to prevent disease spread"
+    ],
+    "tipsHi": [
+      "6 घंटे के भीतर कोलोस्ट्रम खिलाएं (4-6 लीटर)",
+      "साफ और सूखे बछड़े का आवास बनाए रखें",
+      "1 सप्ताह से बछड़े स्टार्टर फीड प्रदान करें",
+      "दिन 3 से ताजा पानी उपलब्ध",
+      "बीमारी के फैलाव को रोकने के लिए अलग आवास"
+    ],
+    "warningSigns": [
+      "Failure to stand or nurse",
+      "Diarrhea or scours",
+      "Respiratory distress",
+      "Poor appetite",
+      "Navel infection"
+    ],
+    "priority": "high",
+    "season": "all",
+    "applicableBreeds": ["all"],
+    "imageUrl": "/images/health-tips/calf-care.jpg",
+    "videoUrl": null,
+    "createdAt": "2024-01-15T00:00:00.000Z",
+    "updatedAt": "2024-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "9",
+    "title": "Monsoon Care",
+    "titleHi": "मानसून देखभाल",
+    "category": "Seasonal Care",
+    "categoryHi": "मौसमी देखभाल",
+    "description": "Special care measures during monsoon season to prevent diseases",
+    "descriptionHi": "बीमारियों को रोकने के लिए मानसून के मौसम में विशेष देखभाल उपाय",
+    "content": "Maintain dry housing, prevent water stagnation, ensure proper drainage, and monitor for monsoon-related diseases like foot rot, pneumonia, and vector-borne diseases.",
+    "contentHi": "सूखे आवास बनाए रखें, पानी के ठहराव को रोकें, उचित जल निकासी सुनिश्चित करें, और पैर सड़न, निमोनिया, और वेक्टर-जनित बीमारियों जैसी मानसून संबंधी बीमारियों की निगरानी करें।",
+    "tips": [
+      "Ensure proper drainage around cattle sheds",
+      "Keep animals on elevated dry platforms",
+      "Apply copper sulfate foot baths regularly",
+      "Check for respiratory issues daily",
+      "Control mosquitoes and flies"
+    ],
+    "tipsHi": [
+      "मवेशी शेड के आसपास उचित जल निकासी सुनिश्चित करें",
+      "पशुओं को ऊंचे सूखे प्लेटफॉर्म पर रखें",
+      "नियमित रूप से कॉपर सल्फेट फुट बाथ लगाएं",
+      "दैनिक श्वसन संबंधी समस्याओं की जांच करें",
+      "मच्छर और मक्खियों को नियंत्रित करें"
+    ],
+    "warningSigns": [
+      "Lameness or foot problems",
+      "Coughing or breathing difficulties",
+      "Fever and lethargy",
+      "Skin infections",
+      "Vector-borne disease symptoms"
+    ],
+    "priority": "high",
+    "season": "monsoon",
+    "applicableBreeds": ["all"],
+    "imageUrl": "/images/health-tips/monsoon-care.jpg",
+    "videoUrl": null,
+    "createdAt": "2024-01-15T00:00:00.000Z",
+    "updatedAt": "2024-01-15T00:00:00.000Z"
+  },
+  {
+    "id": "10",
+    "title": "Winter Care Management",
+    "titleHi": "सर्दी देखभाल प्रबंधन",
+    "category": "Seasonal Care",
+    "categoryHi": "मौसमी देखभाल",
+    "description": "Cold weather management to maintain cattle comfort and productivity",
+    "descriptionHi": "मवेशी आराम और उत्पादकता बनाए रखने के लिए ठंडे मौसम का प्रबंधन",
+    "content": "Provide windbreaks, extra bedding, and adjust nutrition to meet increased energy demands. Monitor for cold stress and ensure adequate vitamin supplementation during winter months.",
+    "contentHi": "हवा रोधक, अतिरिक्त बिस्तर प्रदान करें, और बढ़ी हुई ऊर्जा मांगों को पूरा करने के लिए पोषण को समायोजित करें। सर्दियों के महीनों के दौरान ठंड के तनाव की निगरानी करें और पर्याप्त विटामिन पूरकता सुनिश्चित करें।",
+    "tips": [
+      "Provide windbreaks and shelter",
+      "Use extra bedding (straw or hay)",
+      "Increase energy-rich feed",
+      "Ensure warm water availability",
+      "Supplement with vitamins A, D, E"
+    ],
+    "tipsHi": [
+      "हवा रोधक और आश्रय प्रदान करें",
+      "अतिरिक्त बिस्तर का उपयोग करें (पुआल या घास)",
+      "ऊर्जा समृद्ध चारा बढ़ाएं",
+      "गर्म पानी की उपलब्धता सुनिश्चित करें",
+      "विटामिन A, D, E के साथ पूरक"
+    ],
+    "warningSigns": [
+      "Shivering or cold stress",
+      "Reduced feed intake",
+      "Frostbite on extremities",
+      "Respiratory issues",
+      "Drop in milk production"
+    ],
+    "priority": "medium",
+    "season": "winter",
+    "applicableBreeds": ["all"],
+    "imageUrl": "/images/health-tips/winter-care.jpg",
+    "videoUrl": null,
+    "createdAt": "2024-01-15T00:00:00.000Z",
+    "updatedAt": "2024-01-15T00:00:00.000Z"
+  }
+]

@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import BottomNavigation from "@/components/layout/BottomNavigation";
 import { Toaster } from "@/components/ui/sonner";
+import { Providers } from "@/components/common/Providers";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -25,18 +26,20 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className={`${inter.variable} font-sans h-full antialiased`}>
-        <div className="flex flex-col min-h-screen">
-          {/* Main content area */}
-          <main className="flex-1 mobile-nav-height">
-            {children}
-          </main>
+        <Providers>
+          <div className="flex flex-col min-h-screen">
+            {/* Main content area */}
+            <main className="flex-1 mobile-nav-height">
+              {children}
+            </main>
+            
+            {/* Bottom navigation - only show on app pages */}
+            <BottomNavigation />
+          </div>
           
-          {/* Bottom navigation - only show on app pages */}
-          <BottomNavigation />
-        </div>
-        
-        {/* Toast notifications */}
-        <Toaster />
+          {/* Toast notifications */}
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );
