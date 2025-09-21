@@ -1,96 +1,255 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import Image from 'next/image';
-import { 
-  Camera, 
-  Image as ImageIcon, 
-  ArrowLeft,
-  Moon,
-  Sun,
-  Save,
-  RotateCcw
-} from 'lucide-react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { Camera, Upload, Sparkles, Info, AlertCircle, CheckCircle, Zap, Brain, ChevronRight, RotateCcw, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from 'sonner';
+import Image from 'next/image';
 
+// AI Classification Results Interface
 interface ClassificationResult {
-  breedName: string;
-  confidence: number;
-  category: 'Cattle' | 'Buffalo';
-  characteristics: string[];
+  animal_type: {
+    prediction: string;
+    confidence: number;
+    confidence_level: string;
+  };
+  breed: {
+    prediction: string;
+    confidence: number;
+    confidence_level: string;
+    top_3: Array<{
+      breed: string;
+      confidence: number;
+    }>;
+    needs_verification: boolean;
+    suggestion?: string;
+  };
+  age: {
+    prediction: string;
+    confidence: number;
+    confidence_level: string;
+  };
+  gender: {
+    prediction: string;
+    confidence: number;
+    confidence_level: string;
+  };
+  health: {
+    prediction: string;
+    confidence: number;
+    confidence_level: string;
+  };
+  processing_time: number;
 }
 
-const ClassifyPage: React.FC = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [isClassifying, setIsClassifying] = useState(false);
+interface BreedInfo {
+  id: number;
+  breedName: string;
+  category: 'Cattle' | 'Buffalo';
+  origin: string;
+  primaryUse: string;
+  milkYield: string;
+  bodyColor: string;
+  uniqueTraits: string;
+  conservationStatus: string;
+}
+
+export default function ClassificationPage() {
+  // State management
+  const [isLoading, setIsLoading] = useState(false);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [classificationResult, setClassificationResult] = useState<ClassificationResult | null>(null);
-  const [showHeatmap, setShowHeatmap] = useState(false);
+  const [breedInfo, setBreedInfo] = useState<BreedInfo | null>(null);
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isModelLoaded, setIsModelLoaded] = useState(false);
+  
+  // Refs
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark');
+  // Camera functions
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { 
+          facingMode: 'environment', // Use back camera
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      });
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        setIsCameraActive(true);
+      }
+    } catch (error) {
+      setError('Unable to access camera. Please check permissions.');
+      toast.error('Camera access denied');
+    }
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const stopCamera = () => {
+    if (videoRef.current?.srcObject) {
+      const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
+      tracks.forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+      setIsCameraActive(false);
+    }
+  };
+
+  const capturePhoto = useCallback(() => {
+    if (!videoRef.current || !canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const video = videoRef.current;
+    const context = canvas.getContext('2d');
+
+    if (!context) return;
+
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw video frame to canvas
+    context.drawImage(video, 0, 0);
+
+    // Convert to base64 image
+    const imageData = canvas.toDataURL('image/jpeg', 0.8);
+    setCapturedImage(imageData);
+    
+    // Stop camera after capture
+    stopCamera();
+    
+    // Start classification immediately
+    classifyImage(imageData);
+  }, []);
+
+  // File upload handler
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string);
-        setClassificationResult(null);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select a valid image file');
+      return;
     }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const imageData = e.target?.result as string;
+      setCapturedImage(imageData);
+      classifyImage(imageData);
+    };
+    reader.readAsDataURL(file);
   };
 
-  const handleCameraCapture = () => {
-    // For now, we'll simulate camera capture by opening file picker
-    // In a real app, this would open the camera
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleGallerySelect = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleClassify = async () => {
-    if (!selectedImage) return;
+  // Mock AI Classification (replace with actual API call)
+  const classifyImage = async (imageData: string) => {
+    if (!imageData) return;
     
-    setIsClassifying(true);
+    setIsLoading(true);
+    setError(null);
+    setClassificationResult(null);
     
-    // Simulate AI classification with delay
-    setTimeout(() => {
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       // Mock classification result
       const mockResult: ClassificationResult = {
-        breedName: "Cattle",
-        confidence: 95,
-        category: "Cattle",
-        characteristics: [
-          "Good dairy potential",
-          "Medium body size",
-          "Heat tolerant",
-          "Disease resistant"
-        ]
+        animal_type: {
+          prediction: 'cattle',
+          confidence: 0.89,
+          confidence_level: 'high'
+        },
+        breed: {
+          prediction: 'Gir',
+          confidence: 0.82,
+          confidence_level: 'high',
+          top_3: [
+            { breed: 'Gir', confidence: 0.82 },
+            { breed: 'Sahiwal', confidence: 0.14 },
+            { breed: 'Red Sindhi', confidence: 0.04 }
+          ],
+          needs_verification: false
+        },
+        age: {
+          prediction: 'adult',
+          confidence: 0.76,
+          confidence_level: 'medium'
+        },
+        gender: {
+          prediction: 'female',
+          confidence: 0.71,
+          confidence_level: 'medium'
+        },
+        health: {
+          prediction: 'healthy',
+          confidence: 0.88,
+          confidence_level: 'high'
+        },
+        processing_time: 1.8
       };
       
       setClassificationResult(mockResult);
-      setIsClassifying(false);
-    }, 2000);
+      
+      // Load breed information
+      loadBreedInfo(mockResult.breed.prediction);
+      
+      toast.success(`Classified as ${mockResult.breed.prediction}! 🎉`);
+      
+    } catch (error) {
+      console.error('Classification error:', error);
+      setError('Classification failed. Please try again.');
+      toast.error('Classification failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleReset = () => {
-    setSelectedImage(null);
+  // Load breed information from database
+  const loadBreedInfo = async (breedName: string) => {
+    try {
+      // Mock breed info (in production, this would fetch from your breeds database)
+      const mockBreedInfo: BreedInfo = {
+        id: 1,
+        breedName: breedName,
+        category: breedName === 'Murrah' ? 'Buffalo' : 'Cattle',
+        origin: 'Gujarat, India',
+        primaryUse: 'Milk',
+        milkYield: '2000-3000 kg',
+        bodyColor: 'Reddish dun with white patches',
+        uniqueTraits: 'Prominent forehead, excellent dairy breed',
+        conservationStatus: 'Vulnerable'
+      };
+      
+      setBreedInfo(mockBreedInfo);
+    } catch (error) {
+      console.error('Error loading breed info:', error);
+    }
+  };
+
+  const resetClassification = () => {
+    setCapturedImage(null);
     setClassificationResult(null);
-    setShowHeatmap(false);
+    setBreedInfo(null);
+    setError(null);
+  };
+
+  const getConfidenceColor = (level: string) => {
+    switch (level) {
+      case 'high': return 'text-green-600 bg-green-100';
+      case 'medium': return 'text-yellow-600 bg-yellow-100';
+      case 'low': return 'text-orange-600 bg-orange-100';
+      default: return 'text-red-600 bg-red-100';
+    }
   };
 
   return (
@@ -102,204 +261,336 @@ const ClassifyPage: React.FC = () => {
             <Button variant="ghost" size="icon" className="rounded-full">
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <h1 className="text-xl font-bold text-foreground">Classify</h1>
+            <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+              <Brain className="w-6 h-6 text-primary" />
+              AI Classification
+            </h1>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleDarkMode}
-            className="rounded-full"
-            aria-label="Toggle dark mode"
-          >
-            {isDarkMode ? (
-              <Sun className="w-5 h-5" />
-            ) : (
-              <Moon className="w-5 h-5" />
-            )}
-          </Button>
+          <div className="flex items-center space-x-2">
+            <Badge variant="outline" className="text-green-600">
+              <Zap className="w-3 h-3 mr-1" />
+              AI Ready
+            </Badge>
+          </div>
         </div>
       </header>
 
-      <div className="p-4 space-y-6">
-        {!selectedImage ? (
-          <>
-            {/* Upload Image Section */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-foreground">Upload Image</h2>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <Button
-                  onClick={handleCameraCapture}
-                  className="accessibility-button flex-col space-y-2 h-auto py-6"
-                  variant="outline"
-                >
-                  <Camera className="w-8 h-8" />
-                  <span>Camera</span>
-                </Button>
-                
-                <Button
-                  onClick={handleGallerySelect}
-                  className="accessibility-button flex-col space-y-2 h-auto py-6"
-                  variant="outline"
-                >
-                  <ImageIcon className="w-8 h-8" />
-                  <span>Gallery</span>
-                </Button>
+      <div className="p-4 space-y-6 max-w-4xl mx-auto">
+        {/* Image Capture Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Camera className="w-5 h-5" />
+              Capture or Upload Image
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {!capturedImage ? (
+              <div className="space-y-4">
+                {/* Camera View */}
+                {isCameraActive ? (
+                  <div className="relative">
+                    <video
+                      ref={videoRef}
+                      autoPlay
+                      playsInline
+                      className="w-full rounded-lg bg-black"
+                      style={{ maxHeight: '400px' }}
+                    />
+                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-4">
+                      <Button
+                        onClick={capturePhoto}
+                        size="lg"
+                        className="rounded-full w-16 h-16"
+                      >
+                        <Camera className="w-6 h-6" />
+                      </Button>
+                      <Button
+                        onClick={stopCamera}
+                        variant="outline"
+                        size="lg"
+                        className="rounded-full"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Button
+                        onClick={startCamera}
+                        variant="outline"
+                        size="lg"
+                        className="h-20 flex-col"
+                      >
+                        <Camera className="w-8 h-8 mb-2" />
+                        Take Photo
+                      </Button>
+                      <Button
+                        onClick={() => fileInputRef.current?.click()}
+                        variant="outline"
+                        size="lg"
+                        className="h-20 flex-col"
+                      >
+                        <Upload className="w-8 h-8 mb-2" />
+                        Upload Image
+                      </Button>
+                    </div>
+                    
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                    
+                    {/* Tips */}
+                    <Card>
+                      <CardContent className="p-4">
+                        <h4 className="font-semibold mb-2">📸 Tips for Best Results</h4>
+                        <ul className="text-sm text-muted-foreground space-y-1">
+                          <li>• Ensure good lighting conditions</li>
+                          <li>• Capture the full animal in frame</li>
+                          <li>• Take photo from the side for best profile view</li>
+                          <li>• Avoid blurry or shaky images</li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
               </div>
-            </div>
-            
-            {/* Instructions */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-semibold text-foreground mb-3">Tips for Best Results</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Ensure good lighting</li>
-                  <li>• Capture the full animal in frame</li>
-                  <li>• Avoid blurry images</li>
-                  <li>• Take photo from the side for best profile view</li>
-                </ul>
-              </CardContent>
-            </Card>
-          </>
-        ) : (
-          <>
-            {/* Image Display */}
-            <div className="relative">
-              <div className="relative aspect-video bg-muted rounded-2xl overflow-hidden">
-                <Image
-                  src={selectedImage}
-                  alt="Selected animal"
-                  fill
-                  className="object-cover"
-                />
-                
-                {/* Camera overlay guides */}
-                <div className="camera-overlay">
-                  <div className="camera-guide absolute inset-4" />
+            ) : (
+              <div className="space-y-4">
+                <div className="relative">
+                  <img
+                    src={capturedImage}
+                    alt="Captured"
+                    className="w-full rounded-lg max-h-80 object-contain bg-gray-100"
+                  />
+                  <Button
+                    onClick={resetClassification}
+                    variant="outline"
+                    size="sm"
+                    className="absolute top-2 right-2"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                  </Button>
                 </div>
                 
-                {/* Heatmap toggle */}
-                {classificationResult && (
+                {!isLoading && !classificationResult && (
                   <Button
-                    variant="secondary"
-                    size="sm"
-                    className="absolute top-4 right-4"
-                    onClick={() => setShowHeatmap(!showHeatmap)}
+                    onClick={() => classifyImage(capturedImage)}
+                    className="w-full"
+                    size="lg"
                   >
-                    Heatmap
+                    <Sparkles className="w-5 h-5 mr-2" />
+                    Classify Animal
                   </Button>
                 )}
-                
-                {/* Heatmap overlay */}
-                {showHeatmap && classificationResult && (
-                  <div className="heatmap-overlay absolute inset-0 bg-gradient-to-br from-primary/30 via-secondary/20 to-transparent" />
-                )}
               </div>
-            </div>
-
-            {/* Classify Button */}
-            {!classificationResult && (
-              <Button
-                onClick={handleClassify}
-                disabled={isClassifying}
-                className="w-full accessibility-button bg-primary hover:bg-primary/90"
-              >
-                {isClassifying ? 'Classifying...' : 'Classify Now'}
-              </Button>
             )}
+            
+            <canvas ref={canvasRef} className="hidden" />
+          </CardContent>
+        </Card>
 
-            {/* Loading Progress */}
-            {isClassifying && (
-              <Card>
-                <CardContent className="p-6">
-                  <div className="space-y-4">
+        {/* Loading State */}
+        {isLoading && (
+          <Card>
+            <CardContent className="p-6 text-center">
+              <div className="space-y-4">
+                <div className="w-16 h-16 mx-auto relative">
+                  <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
+                  <div className="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                </div>
+                <div>
+                  <h3 className="font-semibold">Analyzing Image...</h3>
+                  <p className="text-muted-foreground">
+                    AI is examining the animal characteristics
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Error Display */}
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {/* Classification Results */}
+        {classificationResult && (
+          <div className="space-y-6">
+            {/* Main Classification Result */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                    Classification Complete
+                  </span>
+                  <Badge variant="outline">
+                    {(classificationResult.processing_time * 1000).toFixed(0)}ms
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Animal Type & Breed */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-semibold mb-2">Animal Type</h4>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Analyzing image...</span>
-                      <span className="text-sm text-muted-foreground">AI Processing</span>
+                      <span className="text-lg capitalize">
+                        {classificationResult.animal_type.prediction}
+                      </span>
+                      <Badge className={getConfidenceColor(classificationResult.animal_type.confidence_level)}>
+                        {(classificationResult.animal_type.confidence * 100).toFixed(1)}%
+                      </Badge>
                     </div>
-                    <Progress value={75} className="h-2" />
                   </div>
+                  
+                  <div>
+                    <h4 className="font-semibold mb-2">Primary Breed</h4>
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-medium">
+                        {classificationResult.breed.prediction}
+                      </span>
+                      <Badge className={getConfidenceColor(classificationResult.breed.confidence_level)}>
+                        {(classificationResult.breed.confidence * 100).toFixed(1)}%
+                      </Badge>
+                    </div>
+                    {classificationResult.breed.needs_verification && (
+                      <p className="text-sm text-orange-600 mt-1">
+                        ⚠️ Verification recommended
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Top 3 Breed Predictions */}
+                {classificationResult.breed.top_3 && (
+                  <div>
+                    <h4 className="font-semibold mb-2">Alternative Possibilities</h4>
+                    <div className="space-y-2">
+                      {classificationResult.breed.top_3.slice(1).map((breed, index) => (
+                        <div key={index} className="flex items-center justify-between">
+                          <span>{breed.breed}</span>
+                          <div className="flex items-center space-x-2">
+                            <Progress value={breed.confidence * 100} className="w-20 h-2" />
+                            <span className="text-sm text-muted-foreground">
+                              {(breed.confidence * 100).toFixed(1)}%
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Additional Classifications */}
+                <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+                  <div className="text-center">
+                    <h5 className="font-semibold text-sm text-muted-foreground">AGE</h5>
+                    <p className="text-lg capitalize">{classificationResult.age.prediction}</p>
+                    <Badge size="sm" className={getConfidenceColor(classificationResult.age.confidence_level)}>
+                      {(classificationResult.age.confidence * 100).toFixed(0)}%
+                    </Badge>
+                  </div>
+                  
+                  <div className="text-center">
+                    <h5 className="font-semibold text-sm text-muted-foreground">GENDER</h5>
+                    <p className="text-lg capitalize">{classificationResult.gender.prediction}</p>
+                    <Badge size="sm" className={getConfidenceColor(classificationResult.gender.confidence_level)}>
+                      {(classificationResult.gender.confidence * 100).toFixed(0)}%
+                    </Badge>
+                  </div>
+                  
+                  <div className="text-center">
+                    <h5 className="font-semibold text-sm text-muted-foreground">HEALTH</h5>
+                    <p className="text-lg capitalize">{classificationResult.health.prediction}</p>
+                    <Badge size="sm" className={getConfidenceColor(classificationResult.health.confidence_level)}>
+                      {(classificationResult.health.confidence * 100).toFixed(0)}%
+                    </Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Breed Information */}
+            {breedInfo && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Info className="w-5 h-5" />
+                    Breed Information - {breedInfo.breedName}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Tabs defaultValue="basic" className="w-full">
+                    <TabsList className="grid w-full grid-cols-3">
+                      <TabsTrigger value="basic">Basic Info</TabsTrigger>
+                      <TabsTrigger value="characteristics">Traits</TabsTrigger>
+                      <TabsTrigger value="care">Care Guide</TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="basic" className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <h4 className="font-semibold">Origin</h4>
+                          <p className="text-muted-foreground">{breedInfo.origin}</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">Primary Use</h4>
+                          <p className="text-muted-foreground">{breedInfo.primaryUse}</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">Milk Yield</h4>
+                          <p className="text-muted-foreground">{breedInfo.milkYield}</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">Conservation Status</h4>
+                          <Badge variant={breedInfo.conservationStatus === 'Critical' ? 'destructive' : 'secondary'}>
+                            {breedInfo.conservationStatus}
+                          </Badge>
+                        </div>
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="characteristics" className="space-y-4">
+                      <div>
+                        <h4 className="font-semibold">Body Color</h4>
+                        <p className="text-muted-foreground">{breedInfo.bodyColor}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">Unique Traits</h4>
+                        <p className="text-muted-foreground">{breedInfo.uniqueTraits}</p>
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="care" className="space-y-4">
+                      <div className="text-center p-6">
+                        <p className="text-muted-foreground">
+                          Care guide information coming soon...
+                        </p>
+                        <Button variant="outline" className="mt-4">
+                          <ChevronRight className="w-4 h-4 mr-2" />
+                          View Full Profile
+                        </Button>
+                      </div>
+                    </TabsContent>
+                  </Tabs>
                 </CardContent>
               </Card>
             )}
-
-            {/* Classification Result */}
-            {classificationResult && (
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-foreground">Result</h2>
-                
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-4">
-                        <div className="w-16 h-16 bg-muted rounded-xl flex items-center justify-center">
-                          <Image
-                            src="/api/placeholder/64/64"
-                            alt="Cattle icon"
-                            width={48}
-                            height={48}
-                            className="rounded"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-xl font-semibold text-foreground">
-                            {classificationResult.breedName}
-                          </h3>
-                          <p className="text-sm text-muted-foreground mb-2">
-                            Confidence: {classificationResult.confidence}%
-                          </p>
-                          
-                          {/* Confidence Progress */}
-                          <Progress 
-                            value={classificationResult.confidence} 
-                            className="h-2 mb-3" 
-                          />
-                          
-                          {/* Characteristics */}
-                          <div className="flex flex-wrap gap-2">
-                            {classificationResult.characteristics.map((characteristic, index) => (
-                              <Badge key={index} variant="secondary" className="text-xs">
-                                {characteristic}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <Button variant="outline" size="icon">
-                        <Save className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                {/* Action Buttons */}
-                <div className="grid grid-cols-2 gap-4">
-                  <Button variant="outline" onClick={handleReset}>
-                    <RotateCcw className="w-4 h-4 mr-2" />
-                    Try Another
-                  </Button>
-                  <Button>
-                    View Details
-                  </Button>
-                </div>
-              </div>
-            )}
-          </>
+          </div>
         )}
-
-        {/* Hidden file input */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          onChange={handleImageUpload}
-          className="hidden"
-        />
       </div>
     </div>
   );
-};
-
-export default ClassifyPage;
+}
