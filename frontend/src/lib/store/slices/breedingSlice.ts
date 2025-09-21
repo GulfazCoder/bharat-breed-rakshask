@@ -6,13 +6,13 @@ const initialState: BreedingState = {
     {
       id: '1',
       animalId: 'animal-1',
-      matingDate: new Date('2024-03-15'),
-      expectedDueDate: new Date('2024-12-15'),
+      matingDate: '2024-03-15T00:00:00.000Z',
+      expectedDueDate: '2024-12-15T00:00:00.000Z',
       breedingMethod: 'Natural',
       pregnancyStatus: 'Confirmed',
       notes: 'Healthy pregnancy progress',
-      createdAt: new Date('2024-03-15'),
-      updatedAt: new Date('2024-03-15')
+      createdAt: '2024-03-15T00:00:00.000Z',
+      updatedAt: '2024-03-15T00:00:00.000Z'
     }
   ],
   upcomingEvents: [],
@@ -20,8 +20,8 @@ const initialState: BreedingState = {
     {
       id: '1',
       title: 'Ganga - Due Date',
-      start: new Date(2024, 11, 15),
-      end: new Date(2024, 11, 15),
+      start: '2024-12-15T00:00:00.000Z',
+      end: '2024-12-15T00:00:00.000Z',
       type: 'delivery',
       animalId: 'animal-1',
       animalName: 'Ganga',
@@ -31,8 +31,8 @@ const initialState: BreedingState = {
     {
       id: '2',
       title: 'Lakshmi - Vaccination',
-      start: new Date(2024, 10, 30),
-      end: new Date(2024, 10, 30),
+      start: '2024-11-30T00:00:00.000Z',
+      end: '2024-11-30T00:00:00.000Z',
       type: 'vaccination',
       animalId: 'animal-2',
       animalName: 'Lakshmi',
@@ -42,8 +42,8 @@ const initialState: BreedingState = {
     {
       id: '3',
       title: 'Shyama - Breeding',
-      start: new Date(2024, 11, 5),
-      end: new Date(2024, 11, 5),
+      start: '2024-12-05T00:00:00.000Z',
+      end: '2024-12-05T00:00:00.000Z',
       type: 'breeding',
       animalId: 'animal-3',
       animalName: 'Shyama',
@@ -53,8 +53,8 @@ const initialState: BreedingState = {
     {
       id: '4',
       title: 'Kamdhenu - Health Checkup',
-      start: new Date(2024, 11, 8),
-      end: new Date(2024, 11, 8),
+      start: '2024-12-08T00:00:00.000Z',
+      end: '2024-12-08T00:00:00.000Z',
       type: 'checkup',
       animalId: 'animal-4',
       animalName: 'Kamdhenu',

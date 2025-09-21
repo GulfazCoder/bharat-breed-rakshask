@@ -45,73 +45,75 @@
 
 :root {
   --radius: 0.75rem;
-  /* Cyber-farm theme - Light mode */
-  --background: oklch(0.96 0.02 85); /* Farm cream */
-  --foreground: oklch(0.2 0.02 140); /* Dark gray */
-  --card: oklch(1 0 0); /* White cards */
-  --card-foreground: oklch(0.2 0.02 140);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.02 140);
-  --primary: oklch(0.5 0.15 145); /* Farm green */
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.7 0.18 85); /* Farm yellow */
-  --secondary-foreground: oklch(0.1 0.02 85);
-  --muted: oklch(0.94 0.02 85); /* Farm beige */
-  --muted-foreground: oklch(0.45 0.02 140);
-  --accent: oklch(0.7 0.18 85); /* Farm yellow */
-  --accent-foreground: oklch(0.1 0.02 85);
-  --destructive: oklch(0.6 0.2 25);
-  --border: oklch(0.88 0.02 85);
-  --input: oklch(0.88 0.02 85);
-  --ring: oklch(0.5 0.15 145);
-  --chart-1: oklch(0.5 0.15 145); /* Green */
-  --chart-2: oklch(0.7 0.18 85);  /* Yellow */
-  --chart-3: oklch(0.4 0.12 145); /* Dark Green */
-  --chart-4: oklch(0.6 0.2 60);   /* Orange */
-  --chart-5: oklch(0.6 0.15 120); /* Light Green */
-  --sidebar: oklch(0.98 0.01 85);
-  --sidebar-foreground: oklch(0.2 0.02 140);
-  --sidebar-primary: oklch(0.5 0.15 145);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.94 0.02 85);
-  --sidebar-accent-foreground: oklch(0.2 0.02 140);
-  --sidebar-border: oklch(0.88 0.02 85);
-  --sidebar-ring: oklch(0.5 0.15 145);
+  /* Custom Palette - Light mode */
+  /* Colors: #f5f4f1, #0d5d35, #034921, #557960, #aab5ab */
+  --background: #f5f4f1; /* Cream background */
+  --foreground: #034921; /* Dark green text */
+  --card: #f5f4f1; /* Cream cards */
+  --card-foreground: #034921;
+  --popover: #f5f4f1;
+  --popover-foreground: #034921;
+  --primary: #0d5d35; /* Primary green */
+  --primary-foreground: #f5f4f1;
+  --secondary: #557960; /* Medium green */
+  --secondary-foreground: #f5f4f1;
+  --muted: #aab5ab; /* Light green-gray */
+  --muted-foreground: #034921;
+  --accent: #557960; /* Medium green accent */
+  --accent-foreground: #f5f4f1;
+  --destructive: #d97706; /* Orange for destructive actions */
+  --border: #aab5ab;
+  --input: #aab5ab;
+  --ring: #0d5d35;
+  --chart-1: #0d5d35; /* Primary green */
+  --chart-2: #557960; /* Medium green */
+  --chart-3: #034921; /* Dark green */
+  --chart-4: #aab5ab; /* Light green-gray */
+  --chart-5: #f5f4f1; /* Cream */
+  --sidebar: #f5f4f1;
+  --sidebar-foreground: #034921;
+  --sidebar-primary: #0d5d35;
+  --sidebar-primary-foreground: #f5f4f1;
+  --sidebar-accent: #aab5ab;
+  --sidebar-accent-foreground: #034921;
+  --sidebar-border: #aab5ab;
+  --sidebar-ring: #0d5d35;
 }
 
 .dark {
-  /* Cyber-farm theme - Dark mode */
-  --background: oklch(0.08 0.01 140); /* Dark background */
-  --foreground: oklch(0.96 0.02 85); /* Light text */
-  --card: oklch(0.12 0.01 140); /* Dark cards */
-  --card-foreground: oklch(0.96 0.02 85);
-  --popover: oklch(0.12 0.01 140);
-  --popover-foreground: oklch(0.96 0.02 85);
-  --primary: oklch(0.6 0.15 145); /* Lighter green for dark mode */
-  --primary-foreground: oklch(0.08 0.01 140);
-  --secondary: oklch(0.7 0.18 85); /* Farm yellow */
-  --secondary-foreground: oklch(0.95 0.02 85);
-  --muted: oklch(0.15 0.01 140);
-  --muted-foreground: oklch(0.65 0.02 140);
-  --accent: oklch(0.7 0.18 85);
-  --accent-foreground: oklch(0.95 0.02 85);
-  --destructive: oklch(0.62 0.2 25);
-  --border: oklch(0.18 0.01 140);
-  --input: oklch(0.18 0.01 140);
-  --ring: oklch(0.6 0.15 145);
-  --chart-1: oklch(0.6 0.15 145); /* Green */
-  --chart-2: oklch(0.7 0.18 85);  /* Yellow */
-  --chart-3: oklch(0.5 0.12 145); /* Dark Green */
-  --chart-4: oklch(0.65 0.2 60);  /* Orange */
-  --chart-5: oklch(0.65 0.15 120); /* Light Green */
-  --sidebar: oklch(0.1 0.01 140);
-  --sidebar-foreground: oklch(0.96 0.02 85);
-  --sidebar-primary: oklch(0.6 0.15 145);
-  --sidebar-primary-foreground: oklch(0.08 0.01 140);
-  --sidebar-accent: oklch(0.15 0.01 140);
-  --sidebar-accent-foreground: oklch(0.96 0.02 85);
-  --sidebar-border: oklch(0.18 0.01 140);
-  --sidebar-ring: oklch(0.6 0.15 145);
+  /* Custom Palette - Dark mode */
+  /* Darker variants of: #f5f4f1, #0d5d35, #034921, #557960, #aab5ab */
+  --background: #034921; /* Dark green background */
+  --foreground: #f5f4f1; /* Cream text */
+  --card: #0d5d35; /* Primary green cards */
+  --card-foreground: #f5f4f1;
+  --popover: #0d5d35;
+  --popover-foreground: #f5f4f1;
+  --primary: #557960; /* Medium green primary */
+  --primary-foreground: #f5f4f1;
+  --secondary: #aab5ab; /* Light green secondary */
+  --secondary-foreground: #034921;
+  --muted: #557960;
+  --muted-foreground: #f5f4f1;
+  --accent: #aab5ab; /* Light green accent */
+  --accent-foreground: #034921;
+  --destructive: #dc2626; /* Red for destructive actions */
+  --border: #557960;
+  --input: #557960;
+  --ring: #aab5ab;
+  --chart-1: #557960; /* Medium green */
+  --chart-2: #aab5ab; /* Light green-gray */
+  --chart-3: #0d5d35; /* Primary green */
+  --chart-4: #f5f4f1; /* Cream */
+  --chart-5: #034921; /* Dark green */
+  --sidebar: #034921;
+  --sidebar-foreground: #f5f4f1;
+  --sidebar-primary: #557960;
+  --sidebar-primary-foreground: #f5f4f1;
+  --sidebar-accent: #0d5d35;
+  --sidebar-accent-foreground: #f5f4f1;
+  --sidebar-border: #557960;
+  --sidebar-ring: #aab5ab;
 }
 
 @layer base {
@@ -182,5 +184,149 @@
 @media print {
   .no-print {
     display: none !important;
+  }
+}
+
+/* Toast notifications styling */
+[data-sonner-toaster] {
+  z-index: 9999 !important;
+}
+
+[data-sonner-toast] {
+  background: hsl(var(--background)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  color: hsl(var(--foreground)) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+  margin-bottom: 0.5rem !important;
+}
+
+[data-sonner-toast][data-type="success"] {
+  border-color: hsl(var(--primary)) !important;
+}
+
+[data-sonner-toast][data-type="error"] {
+  border-color: hsl(var(--destructive)) !important;
+}
+
+/* Animation improvements */
+.toast {
+  animation: toast-slide-in 0.3s ease-out;
+}
+
+@keyframes toast-slide-in {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Custom color palette variations */
+/* Base colors: #f5f4f1, #0d5d35, #034921, #557960, #aab5ab */
+
+.bg-cream {
+  background-color: #f5f4f1;
+}
+.bg-primary-green {
+  background-color: #0d5d35;
+}
+.bg-dark-green {
+  background-color: #034921;
+}
+.bg-medium-green {
+  background-color: #557960;
+}
+.bg-light-green {
+  background-color: #aab5ab;
+}
+
+.text-cream {
+  color: #f5f4f1;
+}
+.text-primary-green {
+  color: #0d5d35;
+}
+.text-dark-green {
+  color: #034921;
+}
+.text-medium-green {
+  color: #557960;
+}
+.text-light-green {
+  color: #aab5ab;
+}
+
+.border-cream {
+  border-color: #f5f4f1;
+}
+.border-primary-green {
+  border-color: #0d5d35;
+}
+.border-dark-green {
+  border-color: #034921;
+}
+.border-medium-green {
+  border-color: #557960;
+}
+.border-light-green {
+  border-color: #aab5ab;
+}
+
+/* Enhanced button animations */
+.btn-enhanced {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-enhanced:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-enhanced:active {
+  transform: translateY(0);
+}
+
+.btn-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-enhanced:hover::before {
+  left: 100%;
+}
+
+/* Loading pulse animation */
+@keyframes loading-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+.loading-pulse {
+  animation: loading-pulse 2s ease-in-out infinite;
+}
+
+/* Mobile bottom navigation spacing adjustment for toasts */
+@media (max-width: 640px) {
+  .mobile-nav-height {
+    min-height: calc(100vh - 70px);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }

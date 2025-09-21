@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Camera, Upload, Sparkles, Info, AlertCircle, CheckCircle, Zap, Brain, ChevronRight, RotateCcw, ArrowLeft } from 'lucide-react';
+import LoadingSpinner from '@/components/ui/loading-spinner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,7 +10,9 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // AI Classification Results Interface
 interface ClassificationResult {
@@ -60,6 +63,12 @@ interface BreedInfo {
 }
 
 export default function ClassificationPage() {
+  // Router for navigation
+  const router = useRouter();
+  
+  // Language context
+  const { language, t } = useLanguage();
+  
   // State management
   const [isLoading, setIsLoading] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -77,58 +86,193 @@ export default function ClassificationPage() {
   // Camera functions
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { 
-          facingMode: 'environment', // Use back camera
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
+      setError(null);
+      
+      // Log available devices for debugging
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        console.log('Available video devices:', videoDevices.length);
+        videoDevices.forEach((device, index) => {
+          console.log(`Camera ${index + 1}: ${device.label || 'Unknown Camera'}`);
+        });
+      } catch (enumError) {
+        console.warn('Could not enumerate devices:', enumError);
+      }
+      
+      // Check if getUserMedia is supported
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Camera API not supported in this browser');
+      }
+      
+      let stream;
+      
+      // Try different camera configurations for laptop compatibility
+      const cameraConfigs = [
+        // First try: Any available camera (works better on laptops)
+        {
+          video: {
+            width: { ideal: 1280, min: 640 },
+            height: { ideal: 720, min: 480 },
+            frameRate: { ideal: 30, min: 15 }
+          }
+        },
+        // Second try: Basic video only
+        {
+          video: true
+        },
+        // Third try: Specific camera if available
+        {
+          video: {
+            facingMode: 'user', // Front camera (more common on laptops)
+            width: { ideal: 640 },
+            height: { ideal: 480 }
+          }
         }
-      });
+      ];
+      
+      // Try each configuration until one works
+      for (const config of cameraConfigs) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia(config);
+          break;
+        } catch (configError) {
+          console.warn('Camera config failed:', config, configError);
+          continue;
+        }
+      }
+      
+      if (!stream) {
+        throw new Error('Unable to access any camera configuration');
+      }
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        setIsCameraActive(true);
+        
+        // Wait for video to be ready
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current?.play();
+          setIsCameraActive(true);
+          toast.success(t('cameraReady') + ' 📸');
+        };
+        
+        // Handle video errors
+        videoRef.current.onerror = (e) => {
+          console.error('Video error:', e);
+          setError('Video stream error. Please try again.');
+          stopCamera();
+        };
       }
-    } catch (error) {
-      setError('Unable to access camera. Please check permissions.');
-      toast.error('Camera access denied');
+      
+    } catch (error: any) {
+      console.error('Camera error:', error);
+      
+      // Provide specific error messages
+      let errorMessage = 'Unable to access camera.';
+      
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        errorMessage = 'Camera permission denied. Please allow camera access and try again.';
+      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+        errorMessage = 'No camera found. Please connect a camera and try again.';
+      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+        errorMessage = 'Camera is already in use by another application.';
+      } else if (error.name === 'OverconstrainedError' || error.name === 'ConstraintNotSatisfiedError') {
+        errorMessage = 'Camera does not support the required settings.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      setError(errorMessage);
+      toast.error(errorMessage);
+      setIsCameraActive(false);
     }
   };
 
   const stopCamera = () => {
     if (videoRef.current?.srcObject) {
-      const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
-      tracks.forEach(track => track.stop());
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
       videoRef.current.srcObject = null;
-      setIsCameraActive(false);
+    }
+    setIsCameraActive(false);
+  };
+
+  // Test camera availability
+  const testCameraAvailability = async () => {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(device => device.kind === 'videoinput');
+      
+      if (videoDevices.length === 0) {
+        toast.error('No cameras detected on this device');
+        return;
+      }
+      
+      // Test basic camera access
+      const testStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      testStream.getTracks().forEach(track => track.stop());
+      
+      toast.success(`${videoDevices.length} camera(s) detected and accessible! ✅`);
+      
+    } catch (error: any) {
+      console.error('Camera test failed:', error);
+      toast.error(`Camera test failed: ${error.message}`);
     }
   };
 
   const capturePhoto = useCallback(() => {
-    if (!videoRef.current || !canvasRef.current) return;
+    if (!videoRef.current || !canvasRef.current) {
+      toast.error('Camera not ready. Please try again.');
+      return;
+    }
 
     const canvas = canvasRef.current;
     const video = videoRef.current;
     const context = canvas.getContext('2d');
 
-    if (!context) return;
+    if (!context) {
+      toast.error('Canvas not supported in this browser.');
+      return;
+    }
 
-    // Set canvas dimensions to match video
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    try {
+      // Check if video is ready
+      if (video.readyState !== video.HAVE_ENOUGH_DATA) {
+        toast.error('Camera is still loading. Please wait a moment.');
+        return;
+      }
 
-    // Draw video frame to canvas
-    context.drawImage(video, 0, 0);
+      // Set canvas dimensions to match video
+      const videoWidth = video.videoWidth || video.clientWidth || 640;
+      const videoHeight = video.videoHeight || video.clientHeight || 480;
+      
+      canvas.width = videoWidth;
+      canvas.height = videoHeight;
 
-    // Convert to base64 image
-    const imageData = canvas.toDataURL('image/jpeg', 0.8);
-    setCapturedImage(imageData);
-    
-    // Stop camera after capture
-    stopCamera();
-    
-    // Start classification immediately
-    classifyImage(imageData);
+      // Draw video frame to canvas
+      context.drawImage(video, 0, 0, videoWidth, videoHeight);
+
+      // Convert to base64 image with good quality
+      const imageData = canvas.toDataURL('image/jpeg', 0.9);
+      
+      if (imageData === 'data:,') {
+        toast.error('Failed to capture image. Please try again.');
+        return;
+      }
+      
+      setCapturedImage(imageData);
+      toast.success(t('photoCapturing') + ' 📸');
+      
+      // Stop camera after capture
+      stopCamera();
+      
+      // Start classification immediately
+      classifyImage(imageData);
+      
+    } catch (error) {
+      console.error('Capture error:', error);
+      toast.error('Failed to capture photo. Please try again.');
+    }
   }, []);
 
   // File upload handler
@@ -258,12 +402,17 @@ export default function ClassificationPage() {
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="rounded-full">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="rounded-full"
+              onClick={() => router.back()}
+            >
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
               <Brain className="w-6 h-6 text-primary" />
-              AI Classification
+              {t('aiClassification')}
             </h1>
           </div>
           <div className="flex items-center space-x-2">
@@ -294,8 +443,9 @@ export default function ClassificationPage() {
                       ref={videoRef}
                       autoPlay
                       playsInline
+                      muted
                       className="w-full rounded-lg bg-black"
-                      style={{ maxHeight: '400px' }}
+                      style={{ maxHeight: '400px', minHeight: '200px' }}
                     />
                     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-4">
                       <Button
@@ -322,19 +472,19 @@ export default function ClassificationPage() {
                         onClick={startCamera}
                         variant="outline"
                         size="lg"
-                        className="h-20 flex-col"
+                        className="h-20 flex-col btn-enhanced hover:border-cyber-green-400 hover:bg-cyber-green-50 transition-all duration-300"
                       >
-                        <Camera className="w-8 h-8 mb-2" />
-                        Take Photo
+                        <Camera className="w-8 h-8 mb-2 text-cyber-green-600" />
+                        <span className="text-cyber-green-700 font-medium">{t('takePhoto')}</span>
                       </Button>
                       <Button
                         onClick={() => fileInputRef.current?.click()}
                         variant="outline"
                         size="lg"
-                        className="h-20 flex-col"
+                        className="h-20 flex-col btn-enhanced hover:border-blue-400 hover:bg-blue-50 transition-all duration-300"
                       >
-                        <Upload className="w-8 h-8 mb-2" />
-                        Upload Image
+                        <Upload className="w-8 h-8 mb-2 text-blue-600" />
+                        <span className="text-blue-700 font-medium">{t('uploadImage')}</span>
                       </Button>
                     </div>
                     
@@ -346,16 +496,31 @@ export default function ClassificationPage() {
                       className="hidden"
                     />
                     
-                    {/* Tips */}
+                    {/* Tips & Camera Test */}
                     <Card>
                       <CardContent className="p-4">
-                        <h4 className="font-semibold mb-2">📸 Tips for Best Results</h4>
-                        <ul className="text-sm text-muted-foreground space-y-1">
-                          <li>• Ensure good lighting conditions</li>
-                          <li>• Capture the full animal in frame</li>
-                          <li>• Take photo from the side for best profile view</li>
-                          <li>• Avoid blurry or shaky images</li>
-                        </ul>
+                        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                          <div className="flex-1">
+                            <h4 className="font-semibold mb-2">📸 Tips for Best Results</h4>
+                            <ul className="text-sm text-muted-foreground space-y-1">
+                              <li>• Ensure good lighting conditions</li>
+                              <li>• Capture the full animal in frame</li>
+                              <li>• Take photo from the side for best profile view</li>
+                              <li>• Avoid blurry or shaky images</li>
+                            </ul>
+                          </div>
+                          <div className="flex-shrink-0">
+                            <p className="text-sm text-muted-foreground mb-2">Having camera issues?</p>
+                            <Button
+                              onClick={testCameraAvailability}
+                              variant="outline"
+                              size="sm"
+                              className="text-sm btn-enhanced hover:border-purple-400 hover:bg-purple-50"
+                            >
+                              <span className="text-purple-700">Test Camera 🔍</span>
+                            </Button>
+                          </div>
+                        </div>
                       </CardContent>
                     </Card>
                   </div>
@@ -398,18 +563,39 @@ export default function ClassificationPage() {
 
         {/* Loading State */}
         {isLoading && (
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="space-y-4">
-                <div className="w-16 h-16 mx-auto relative">
-                  <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
-                  <div className="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <Card className="border-2 border-cyber-green-200 bg-gradient-to-br from-cyber-green-50 to-blue-50">
+            <CardContent className="p-8 text-center">
+              <div className="space-y-6">
+                <div className="relative">
+                  <div className="w-20 h-20 mx-auto relative">
+                    <div className="absolute inset-0 border-4 border-cyber-green-200 rounded-full animate-pulse"></div>
+                    <div className="absolute inset-2 border-4 border-cyber-green-500 border-t-transparent rounded-full animate-spin"></div>
+                    <Brain className="w-8 h-8 text-cyber-green-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+                  </div>
+                  <div className="absolute -inset-4 bg-gradient-to-r from-cyber-green-400 to-blue-400 rounded-full opacity-20 animate-ping"></div>
                 </div>
-                <div>
-                  <h3 className="font-semibold">Analyzing Image...</h3>
-                  <p className="text-muted-foreground">
-                    AI is examining the animal characteristics
-                  </p>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-cyber-green-800">🧠 AI is Analyzing...</h3>
+                  <div className="space-y-1">
+                    <p className="text-cyber-green-700 font-medium">
+                      Identifying breed characteristics
+                    </p>
+                    <div className="flex items-center justify-center space-x-1">
+                      <div className="w-2 h-2 bg-cyber-green-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 bg-cyber-green-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 bg-cyber-green-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 pt-4">
+                  <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <span>Image processed</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
+                    <LoadingSpinner size="sm" />
+                    <span>Analyzing features</span>
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -498,7 +684,7 @@ export default function ClassificationPage() {
                   <div className="text-center">
                     <h5 className="font-semibold text-sm text-muted-foreground">AGE</h5>
                     <p className="text-lg capitalize">{classificationResult.age.prediction}</p>
-                    <Badge size="sm" className={getConfidenceColor(classificationResult.age.confidence_level)}>
+                    <Badge className={`text-xs ${getConfidenceColor(classificationResult.age.confidence_level)}`}>
                       {(classificationResult.age.confidence * 100).toFixed(0)}%
                     </Badge>
                   </div>
@@ -506,7 +692,7 @@ export default function ClassificationPage() {
                   <div className="text-center">
                     <h5 className="font-semibold text-sm text-muted-foreground">GENDER</h5>
                     <p className="text-lg capitalize">{classificationResult.gender.prediction}</p>
-                    <Badge size="sm" className={getConfidenceColor(classificationResult.gender.confidence_level)}>
+                    <Badge className={`text-xs ${getConfidenceColor(classificationResult.gender.confidence_level)}`}>
                       {(classificationResult.gender.confidence * 100).toFixed(0)}%
                     </Badge>
                   </div>
@@ -514,7 +700,7 @@ export default function ClassificationPage() {
                   <div className="text-center">
                     <h5 className="font-semibold text-sm text-muted-foreground">HEALTH</h5>
                     <p className="text-lg capitalize">{classificationResult.health.prediction}</p>
-                    <Badge size="sm" className={getConfidenceColor(classificationResult.health.confidence_level)}>
+                    <Badge className={`text-xs ${getConfidenceColor(classificationResult.health.confidence_level)}`}>
                       {(classificationResult.health.confidence * 100).toFixed(0)}%
                     </Badge>
                   </div>

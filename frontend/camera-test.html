@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Test - Debug Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        video {
+            width: 100%;
+            max-width: 400px;
+            background: black;
+            border-radius: 8px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        #deviceList {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Camera Debug Tool</h1>
+        <p>This tool helps diagnose camera issues in your browser. Use this to test camera functionality before using the main application.</p>
+        
+        <div id="status"></div>
+        
+        <h3>1. Check Available Cameras</h3>
+        <button onclick="listCameras()">List Available Cameras</button>
+        <div id="deviceList"></div>
+        
+        <h3>2. Test Camera Access</h3>
+        <button onclick="testCamera()">Test Basic Camera Access</button>
+        <button onclick="testCameraWithConstraints()">Test With Constraints</button>
+        
+        <h3>3. Live Camera Feed</h3>
+        <button id="startBtn" onclick="startCamera()">Start Camera</button>
+        <button id="stopBtn" onclick="stopCamera()" disabled>Stop Camera</button>
+        <button onclick="capturePhoto()" id="captureBtn" disabled>Capture Photo</button>
+        
+        <div style="margin-top: 20px;">
+            <video id="video" autoplay playsinline muted style="display:none;"></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+            <img id="captured" style="max-width: 400px; border-radius: 8px; display:none;">
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captured = document.getElementById('captured');
+        let currentStream = null;
+
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+        }
+
+        async function listCameras() {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                
+                let deviceInfo = `Found ${videoDevices.length} camera(s):\n\n`;
+                videoDevices.forEach((device, index) => {
+                    deviceInfo += `${index + 1}. ${device.label || 'Unknown Camera'}\n`;
+                    deviceInfo += `   ID: ${device.deviceId.substring(0, 20)}...\n\n`;
+                });
+                
+                if (videoDevices.length === 0) {
+                    deviceInfo = 'No cameras detected!';
+                    showStatus('No cameras found on this device', 'error');
+                } else {
+                    showStatus(`Found ${videoDevices.length} camera(s)`, 'success');
+                }
+                
+                document.getElementById('deviceList').textContent = deviceInfo;
+            } catch (error) {
+                showStatus(`Error listing cameras: ${error.message}`, 'error');
+                document.getElementById('deviceList').textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function testCamera() {
+            try {
+                showStatus('Testing basic camera access...', 'info');
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                stream.getTracks().forEach(track => track.stop());
+                showStatus('✅ Basic camera access works!', 'success');
+            } catch (error) {
+                showStatus(`❌ Camera test failed: ${error.message}`, 'error');
+                console.error('Camera test error:', error);
+            }
+        }
+
+        async function testCameraWithConstraints() {
+            const testConfigs = [
+                { name: "High Resolution", config: { video: { width: 1280, height: 720 } } },
+                { name: "Medium Resolution", config: { video: { width: 640, height: 480 } } },
+                { name: "Front Camera", config: { video: { facingMode: 'user' } } },
+                { name: "Back Camera", config: { video: { facingMode: 'environment' } } },
+                { name: "Any Camera", config: { video: true } }
+            ];
+
+            showStatus('Testing different camera configurations...', 'info');
+            let results = 'Test Results:\n\n';
+
+            for (const test of testConfigs) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia(test.config);
+                    stream.getTracks().forEach(track => track.stop());
+                    results += `✅ ${test.name}: Works\n`;
+                } catch (error) {
+                    results += `❌ ${test.name}: ${error.name}\n`;
+                }
+            }
+
+            document.getElementById('deviceList').textContent = results;
+            showStatus('Configuration tests completed', 'success');
+        }
+
+        async function startCamera() {
+            try {
+                showStatus('Starting camera...', 'info');
+                
+                // Try multiple configurations like in your main app
+                const cameraConfigs = [
+                    {
+                        video: {
+                            width: { ideal: 1280, min: 640 },
+                            height: { ideal: 720, min: 480 },
+                            frameRate: { ideal: 30, min: 15 }
+                        }
+                    },
+                    { video: true },
+                    {
+                        video: {
+                            facingMode: 'user',
+                            width: { ideal: 640 },
+                            height: { ideal: 480 }
+                        }
+                    }
+                ];
+
+                let stream = null;
+                for (const config of cameraConfigs) {
+                    try {
+                        stream = await navigator.mediaDevices.getUserMedia(config);
+                        console.log('Successful config:', config);
+                        break;
+                    } catch (configError) {
+                        console.warn('Config failed:', config, configError);
+                        continue;
+                    }
+                }
+
+                if (!stream) {
+                    throw new Error('All camera configurations failed');
+                }
+
+                currentStream = stream;
+                video.srcObject = stream;
+                video.style.display = 'block';
+                
+                video.onloadedmetadata = () => {
+                    video.play();
+                    showStatus('✅ Camera started successfully!', 'success');
+                    document.getElementById('startBtn').disabled = true;
+                    document.getElementById('stopBtn').disabled = false;
+                    document.getElementById('captureBtn').disabled = false;
+                };
+
+            } catch (error) {
+                showStatus(`❌ Failed to start camera: ${error.message}`, 'error');
+                console.error('Camera start error:', error);
+            }
+        }
+
+        function stopCamera() {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                currentStream = null;
+            }
+            video.srcObject = null;
+            video.style.display = 'none';
+            captured.style.display = 'none';
+            
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('captureBtn').disabled = true;
+            
+            showStatus('Camera stopped', 'info');
+        }
+
+        function capturePhoto() {
+            if (!currentStream || !video.videoWidth) {
+                showStatus('Camera not ready for capture', 'error');
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            ctx.drawImage(video, 0, 0);
+            
+            const imageData = canvas.toDataURL('image/jpeg', 0.9);
+            captured.src = imageData;
+            captured.style.display = 'block';
+            
+            showStatus('📸 Photo captured successfully!', 'success');
+        }
+
+        // Auto-list cameras on page load
+        window.onload = () => {
+            listCameras();
+            showStatus('Camera debug tool ready. Start by testing camera availability.', 'info');
+        };
+    </script>
+</body>
+</html>

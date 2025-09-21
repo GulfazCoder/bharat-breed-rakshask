@@ -31,13 +31,13 @@ export class DataExporter {
         'Breed ID': animal.breedId,
         'Category': animal.category,
         'Gender': animal.gender,
-        'Birth Date': animal.birthDate.toLocaleDateString(),
+        'Birth Date': new Date(animal.birthDate).toLocaleDateString(),
         'Age': animal.age,
         'Height (cm)': animal.height,
         'Weight (kg)': animal.weight,
         'Pregnant': animal.isPregnant ? 'Yes' : 'No',
         'Health Status': animal.healthStatus,
-        'Last Vaccination': animal.lastVaccination?.toLocaleDateString() || 'N/A',
+        'Last Vaccination': animal.lastVaccination ? new Date(animal.lastVaccination).toLocaleDateString() : 'N/A',
         'Notes': animal.notes || 'N/A'
       }));
       
@@ -49,9 +49,9 @@ export class DataExporter {
     if (options.sections.breedingRecords && breedingRecords.length > 0) {
       const breedingData = breedingRecords.map(record => ({
         'Animal ID': record.animalId,
-        'Mating Date': record.matingDate.toLocaleDateString(),
-        'Expected Due Date': record.expectedDueDate.toLocaleDateString(),
-        'Actual Due Date': record.actualDueDate?.toLocaleDateString() || 'N/A',
+        'Mating Date': new Date(record.matingDate).toLocaleDateString(),
+        'Expected Due Date': new Date(record.expectedDueDate).toLocaleDateString(),
+        'Actual Due Date': record.actualDueDate ? new Date(record.actualDueDate).toLocaleDateString() : 'N/A',
         'Mate ID': record.mateId || 'N/A',
         'Breeding Method': record.breedingMethod,
         'Pregnancy Status': record.pregnancyStatus,
@@ -69,8 +69,8 @@ export class DataExporter {
         'Animal ID': record.animalId,
         'Vaccine Name': record.vaccineName,
         'Vaccine Type': record.vaccineType,
-        'Administered Date': record.administeredDate.toLocaleDateString(),
-        'Next Due Date': record.nextDueDate.toLocaleDateString(),
+        'Administered Date': new Date(record.administeredDate).toLocaleDateString(),
+        'Next Due Date': new Date(record.nextDueDate).toLocaleDateString(),
         'Veterinarian ID': record.veterinarianId || 'N/A',
         'Batch Number': record.batchNumber || 'N/A',
         'Notes': record.notes || 'N/A'
@@ -90,8 +90,8 @@ export class DataExporter {
         'Diagnosis': record.diagnosis || 'N/A',
         'Treatment': record.treatment || 'N/A',
         'Medications': record.medications?.join(', ') || 'N/A',
-        'Record Date': record.recordDate.toLocaleDateString(),
-        'Follow-up Date': record.followUpDate?.toLocaleDateString() || 'N/A',
+        'Record Date': new Date(record.recordDate).toLocaleDateString(),
+        'Follow-up Date': record.followUpDate ? new Date(record.followUpDate).toLocaleDateString() : 'N/A',
         'Resolved': record.resolved ? 'Yes' : 'No'
       }));
       
@@ -126,7 +126,7 @@ export class DataExporter {
     doc.text(`Export Date: ${new Date().toLocaleDateString()}`, 20, yPosition);
     yPosition += 10;
 
-    doc.text(`Date Range: ${options.dateRange.start.toLocaleDateString()} - ${options.dateRange.end.toLocaleDateString()}`, 20, yPosition);
+    doc.text(`Date Range: ${new Date(options.dateRange.start).toLocaleDateString()} - ${new Date(options.dateRange.end).toLocaleDateString()}`, 20, yPosition);
     yPosition += 20;
 
     // Basic animal information
@@ -164,8 +164,8 @@ export class DataExporter {
 
       const breedingTableData = breedingRecords.map(record => [
         record.animalId,
-        record.matingDate.toLocaleDateString(),
-        record.expectedDueDate.toLocaleDateString(),
+        new Date(record.matingDate).toLocaleDateString(),
+        new Date(record.expectedDueDate).toLocaleDateString(),
         record.breedingMethod,
         record.pregnancyStatus
       ]);

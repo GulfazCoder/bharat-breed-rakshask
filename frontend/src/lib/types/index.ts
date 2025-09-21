@@ -67,17 +67,17 @@ export interface Animal {
 export interface BreedingRecord {
   id: string;
   animalId: string;
-  matingDate: Date;
-  expectedDueDate: Date;
-  actualDueDate?: Date;
+  matingDate: string;
+  expectedDueDate: string;
+  actualDueDate?: string;
   mateId?: string;
   breedingMethod: 'Natural' | 'AI' | 'ET';
   pregnancyStatus: 'Confirmed' | 'Expected' | 'Failed' | 'Delivered';
   offspringCount?: number;
   offspringIds?: string[];
   notes?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Vaccination and Health Types
@@ -301,8 +301,8 @@ export interface BreedsState {
 export interface CalendarEvent {
   id: string;
   title: string;
-  start: Date;
-  end: Date;
+  start: string;
+  end: string;
   type: 'breeding' | 'vaccination' | 'checkup' | 'delivery';
   animalId: string;
   animalName: string;
@@ -319,8 +319,8 @@ export interface BreedingState {
     eventType: string;
     animalId: string;
     dateRange: {
-      start: Date | null;
-      end: Date | null;
+      start: string | null;
+      end: string | null;
     };
   };
   loading: boolean;

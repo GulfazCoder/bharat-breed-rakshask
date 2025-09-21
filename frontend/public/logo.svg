@@ -1,0 +1,40 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Green rounded background -->
+  <rect width="512" height="512" rx="120" fill="#2F7D32"/>
+  
+  <!-- White cow/bull silhouette -->
+  <g transform="translate(64, 80)">
+    <!-- Body -->
+    <ellipse cx="192" cy="180" rx="120" ry="60" fill="white"/>
+    
+    <!-- Head -->
+    <ellipse cx="80" cy="120" rx="50" ry="45" fill="white"/>
+    
+    <!-- Neck connection -->
+    <rect x="110" y="130" width="60" height="40" fill="white"/>
+    
+    <!-- Legs -->
+    <rect x="130" y="220" width="20" height="50" fill="white"/>
+    <rect x="160" y="220" width="20" height="50" fill="white"/>
+    <rect x="220" y="220" width="20" height="50" fill="white"/>
+    <rect x="250" y="220" width="20" height="50" fill="white"/>
+    
+    <!-- Tail -->
+    <path d="M300 200 Q320 220 315 250" stroke="white" stroke-width="8" fill="none" stroke-linecap="round"/>
+    
+    <!-- Horns -->
+    <path d="M65 95 Q60 85 55 75" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M95 95 Q100 85 105 75" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
+    
+    <!-- Eye -->
+    <circle cx="70" cy="115" r="3" fill="#2F7D32"/>
+    
+    <!-- Nose -->
+    <ellipse cx="45" cy="125" rx="8" ry="4" fill="#2F7D32"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="256" y="360" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white" text-anchor="middle">BHARAT</text>
+  <text x="256" y="410" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white" text-anchor="middle">BREED</text>
+  <text x="256" y="460" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white" text-anchor="middle">RAKSHAK</text>
+</svg>

@@ -12,10 +12,15 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Bharat Breed Rakshask",
-  description: "Comprehensive cattle and buffalo breed management system for Indian farmers",
+  description: "Comprehensive cattle and buffalo breed management system for Indian farmers - Built by Team Codeyodhaa with Love",
   keywords: ["cattle", "buffalo", "breed", "management", "farming", "India", "AI classification"],
-  authors: [{ name: "Bharat Breed Rakshask Team" }],
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+  authors: [{ name: "Team Codeyodhaa" }],
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
@@ -38,7 +43,21 @@ export default function RootLayout({
           </div>
           
           {/* Toast notifications */}
-          <Toaster />
+          <Toaster
+            position="top-center"
+            expand={true}
+            richColors
+            closeButton
+            toastOptions={{
+              style: {
+                background: 'hsl(var(--background))',
+                border: '1px solid hsl(var(--border))',
+                color: 'hsl(var(--foreground))',
+              },
+              className: 'toast',
+              duration: 4000,
+            }}
+          />
         </Providers>
       </body>
     </html>

@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   LayoutDashboard, 
   Camera, 
@@ -50,6 +51,7 @@ const navigationItems: NavigationItem[] = [
 
 const BottomNavigation: React.FC<BottomNavigationProps> = ({ className }) => {
   const pathname = usePathname();
+  const { language } = useLanguage();
 
   return (
     <nav 
@@ -65,23 +67,27 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ className }) => {
       <div className="flex items-center justify-around max-w-lg mx-auto">
         {navigationItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.path || 
-                          (item.path !== '/dashboard' && pathname.startsWith(item.path));
+          // Improved active state detection
+          const isActive = (() => {
+            if (pathname === item.path) return true;
+            if (item.path === '/dashboard' && pathname === '/') return true;
+            if (item.path !== '/dashboard' && item.path !== '/' && pathname.startsWith(item.path)) return true;
+            return false;
+          })();
           
           return (
             <Link
               key={item.id}
               href={item.path}
               className={cn(
-                'accessibility-button',
                 'flex flex-col items-center justify-center',
+                'px-3 py-2 min-w-[60px]',
                 'rounded-xl transition-all duration-200',
-                'focus-visible:focus-visible',
-                'hover:bg-muted',
+                'hover:bg-muted/50 active:bg-muted',
                 'relative',
                 isActive ? [
-                  'text-primary',
-                  'bg-primary/10',
+                  'text-primary-green',
+                  'bg-primary-green/10',
                 ] : [
                   'text-muted-foreground',
                   'hover:text-foreground'
@@ -91,21 +97,21 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ className }) => {
             >
               <Icon 
                 className={cn(
-                  'w-6 h-6 mb-1',
-                  isActive && 'text-primary'
+                  'w-6 h-6 mb-1 transition-colors',
+                  isActive ? 'text-primary-green' : 'text-muted-foreground'
                 )} 
               />
               <span className={cn(
-                'text-xs font-medium',
-                'hidden sm:block',
-                isActive && 'text-primary'
+                'text-xs font-medium leading-tight',
+                'block',
+                isActive ? 'text-primary-green' : 'text-muted-foreground'
               )}>
-                {item.label}
+                {language === 'hi' ? item.labelHi : item.label}
               </span>
               
               {/* Active indicator */}
               {isActive && (
-                <div className="absolute -top-1 w-1 h-1 bg-primary rounded-full" />
+                <div className="absolute top-1 w-2 h-2 bg-primary-green rounded-full animate-pulse" />
               )}
               
               {/* Badge for notifications */}

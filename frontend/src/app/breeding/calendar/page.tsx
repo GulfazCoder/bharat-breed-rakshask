@@ -18,14 +18,13 @@ import { toast } from 'sonner';
 import Link from 'next/link';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { 
-  CalendarEvent,
   breedingSlice,
   fetchCalendarEvents,
   addCalendarEvent,
   updateCalendarEvent,
   deleteCalendarEvent
 } from '@/lib/store/slices/breedingSlice';
-import { RootState } from '@/lib/types';
+import { RootState, CalendarEvent } from '@/lib/types';
 import { useNotificationReminders } from '@/hooks/useNotificationReminders';
 
 const localizer = momentLocalizer(moment);
@@ -109,8 +108,8 @@ const BreedingCalendar: React.FC = () => {
       
       const eventData: Omit<CalendarEvent, 'id'> = {
         title: formData.title,
-        start: eventDateTime,
-        end: eventDateTime,
+        start: eventDateTime.toISOString(),
+        end: eventDateTime.toISOString(),
         type: formData.type,
         animalId: mockAnimals.find(a => a.name === formData.animalName)?.id || 'unknown',
         animalName: formData.animalName,
@@ -142,8 +141,8 @@ const BreedingCalendar: React.FC = () => {
       title: event.title,
       animalName: event.animalName,
       type: event.type,
-      date: moment(event.start).format('YYYY-MM-DD'),
-      time: moment(event.start).format('HH:mm'),
+      date: moment(new Date(event.start)).format('YYYY-MM-DD'),
+      time: moment(new Date(event.start)).format('HH:mm'),
       description: event.description || '',
       notificationEnabled: event.notificationEnabled || false
     });
@@ -186,11 +185,18 @@ const BreedingCalendar: React.FC = () => {
     if (filters.dateRange.start && filters.dateRange.end) {
       filtered = filtered.filter((event: CalendarEvent) => {
         const eventDate = new Date(event.start);
-        return eventDate >= filters.dateRange.start! && eventDate <= filters.dateRange.end!;
+        const startDate = new Date(filters.dateRange.start!);
+        const endDate = new Date(filters.dateRange.end!);
+        return eventDate >= startDate && eventDate <= endDate;
       });
     }
 
-    return filtered;
+    // Transform events to have Date objects for the calendar component
+    return filtered.map((event: CalendarEvent) => ({
+      ...event,
+      start: new Date(event.start),
+      end: new Date(event.end)
+    }));
   }, [calendarEvents, filters]);
 
   const eventStyleGetter = (event: CalendarEvent) => {
@@ -212,8 +218,11 @@ const BreedingCalendar: React.FC = () => {
     nextWeek.setDate(nextWeek.getDate() + 7);
     
     return filteredEvents
-      .filter((event: CalendarEvent) => event.start >= now && event.start <= nextWeek)
-      .sort((a: CalendarEvent, b: CalendarEvent) => a.start.getTime() - b.start.getTime());
+      .filter((event: CalendarEvent) => {
+        const eventDate = new Date(event.start);
+        return eventDate >= now && eventDate <= nextWeek;
+      })
+      .sort((a: CalendarEvent, b: CalendarEvent) => new Date(a.start).getTime() - new Date(b.start).getTime());
   }, [filteredEvents]);
 
   const todaysEvents = useMemo(() => {
@@ -479,7 +488,7 @@ const BreedingCalendar: React.FC = () => {
                         const today = new Date();
                         const nextWeek = new Date();
                         nextWeek.setDate(today.getDate() + 7);
-                        handleFilterChange('dateRange', { start: today, end: nextWeek });
+                        handleFilterChange('dateRange', { start: today.toISOString(), end: nextWeek.toISOString() });
                       }}
                     >
                       Next 7 Days
@@ -491,7 +500,7 @@ const BreedingCalendar: React.FC = () => {
                         const today = new Date();
                         const nextMonth = new Date();
                         nextMonth.setMonth(today.getMonth() + 1);
-                        handleFilterChange('dateRange', { start: today, end: nextMonth });
+                        handleFilterChange('dateRange', { start: today.toISOString(), end: nextMonth.toISOString() });
                       }}
                     >
                       Next Month
