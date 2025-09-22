@@ -1,0 +1,23 @@
+{
+  "totalSamples": 5,
+  "dataQuality": {
+    "totalSamples": 5,
+    "animalTypeDistribution": {
+      "cattle": 3,
+      "buffalo": 2
+    },
+    "breedDistribution": {
+      "Gir": 1,
+      "Murrah": 1,
+      "Sahiwal": 1,
+      "Surti": 1,
+      "Red Sindhi": 1
+    },
+    "expertValidatedPercentage": 100,
+    "dataQualityScore": 100
+  },
+  "recommendedNextSteps": [
+    "Collect 95 more training samples to reach minimum training threshold",
+    "Add more breed diversity - currently covering 5 breeds"
+  ]
+}

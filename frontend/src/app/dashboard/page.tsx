@@ -8,7 +8,10 @@ import {
   Calendar,
   Sun,
   Moon,
-  ChevronRight
+  ChevronRight,
+  Shield,
+  BookOpen,
+  Heart
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -82,10 +85,28 @@ const DashboardPage: React.FC = () => {
       href: "/profile",
     },
     {
-      title: "Buffaloes Reproduction",
-      description: "Manage reproduction cycles",
+      title: "Breeding Management",
+      description: "Track pregnancy & breeding",
       icon: Calendar,
       href: "/breeding",
+    },
+    {
+      title: "Health Tips & Care Guidelines",
+      description: "Expert guidance for cattle health",
+      icon: Heart,
+      href: "/health-tips",
+    },
+    {
+      title: "Government Schemes",
+      description: "Browse welfare schemes",
+      icon: Shield,
+      href: "/schemes",
+    },
+    {
+      title: "Animal Breeds",
+      description: "Breed information database",
+      icon: BookOpen,
+      href: "/breeds",
     }
   ];
 

@@ -41,7 +41,17 @@ interface EventFormData {
 
 const BreedingCalendar: React.FC = () => {
   const dispatch = useDispatch();
-  const { calendarEvents, filters, loading, selectedEvent } = useSelector((state: RootState) => state.breeding as any);
+  const breedingState = useSelector((state: RootState) => state.breeding);
+  
+  // Extract with safe defaults to prevent undefined errors
+  const calendarEvents = breedingState?.calendarEvents || [];
+  const filters = breedingState?.filters || {
+    eventType: 'all',
+    animalId: 'all',
+    dateRange: { start: null, end: null }
+  };
+  const loading = breedingState?.loading || false;
+  const selectedEvent = breedingState?.selectedEvent || null;
   
   // Initialize notification reminders
   const { notifications, unreadCount, markAsRead } = useNotificationReminders();

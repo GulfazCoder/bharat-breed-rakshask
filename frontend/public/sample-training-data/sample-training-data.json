@@ -1,0 +1,218 @@
+[
+  {
+    "id": "sample_001",
+    "labels": {
+      "animalType": "cattle",
+      "breed": "Gir",
+      "age": "adult",
+      "gender": "female",
+      "healthCondition": "good"
+    },
+    "physicalAttributes": {
+      "bodyColor": [
+        "red",
+        "white"
+      ],
+      "hornType": "curved",
+      "bodySize": "medium",
+      "bodyCondition": "normal",
+      "distinctiveFeatures": [
+        "dished face",
+        "pendulous ears"
+      ]
+    },
+    "breedSpecificTraits": {
+      "milkingCapability": "high",
+      "humpPresence": true,
+      "facialFeatures": [
+        "dished face"
+      ],
+      "earType": "drooping",
+      "tailType": "normal"
+    },
+    "locationData": {
+      "region": "Saurashtra",
+      "state": "Gujarat",
+      "climate": "subtropical",
+      "farmType": "dairy"
+    },
+    "expertValidation": {
+      "validatedBy": "Dr. Rajesh Patel, Veterinary Expert",
+      "confidenceLevel": "high",
+      "notes": "Excellent example of Gir breed characteristics with typical dished face and pendulous ears."
+    },
+    "createdAt": "2025-09-22T16:49:03.994Z"
+  },
+  {
+    "id": "sample_002",
+    "labels": {
+      "animalType": "buffalo",
+      "breed": "Murrah",
+      "age": "adult",
+      "gender": "female",
+      "healthCondition": "excellent"
+    },
+    "physicalAttributes": {
+      "bodyColor": [
+        "black"
+      ],
+      "hornType": "curved",
+      "bodySize": "large",
+      "bodyCondition": "well-fed",
+      "distinctiveFeatures": [
+        "hump",
+        "dewlap"
+      ]
+    },
+    "breedSpecificTraits": {
+      "milkingCapability": "very-high",
+      "humpPresence": false,
+      "facialFeatures": [
+        "straight profile"
+      ],
+      "earType": "normal",
+      "tailType": "normal"
+    },
+    "locationData": {
+      "region": "Haryana",
+      "state": "Haryana",
+      "climate": "subtropical",
+      "farmType": "dairy"
+    },
+    "expertValidation": {
+      "validatedBy": "Dr. Sunita Sharma, Animal Husbandry Expert",
+      "confidenceLevel": "very-high",
+      "notes": "Prime example of Murrah buffalo with excellent body condition and high milk production potential."
+    },
+    "createdAt": "2025-09-22T16:49:03.995Z"
+  },
+  {
+    "id": "sample_003",
+    "labels": {
+      "animalType": "cattle",
+      "breed": "Sahiwal",
+      "age": "young",
+      "gender": "male",
+      "healthCondition": "good"
+    },
+    "physicalAttributes": {
+      "bodyColor": [
+        "red",
+        "brown"
+      ],
+      "hornType": "small",
+      "bodySize": "medium",
+      "bodyCondition": "normal",
+      "distinctiveFeatures": [
+        "hump",
+        "dewlap"
+      ]
+    },
+    "breedSpecificTraits": {
+      "milkingCapability": "high",
+      "humpPresence": true,
+      "facialFeatures": [
+        "straight profile"
+      ],
+      "earType": "drooping",
+      "tailType": "normal"
+    },
+    "locationData": {
+      "region": "Punjab",
+      "state": "Punjab",
+      "climate": "subtropical",
+      "farmType": "mixed"
+    },
+    "expertValidation": {
+      "validatedBy": "Prof. Amarjit Singh, Punjab Agricultural University",
+      "confidenceLevel": "high",
+      "notes": "Young Sahiwal bull showing good breed characteristics and growth potential."
+    },
+    "createdAt": "2025-09-22T16:49:03.995Z"
+  },
+  {
+    "id": "sample_004",
+    "labels": {
+      "animalType": "buffalo",
+      "breed": "Surti",
+      "age": "adult",
+      "gender": "female",
+      "healthCondition": "good"
+    },
+    "physicalAttributes": {
+      "bodyColor": [
+        "black",
+        "gray"
+      ],
+      "hornType": "curved",
+      "bodySize": "medium",
+      "bodyCondition": "normal",
+      "distinctiveFeatures": [
+        "facial markings"
+      ]
+    },
+    "breedSpecificTraits": {
+      "milkingCapability": "high",
+      "humpPresence": false,
+      "facialFeatures": [
+        "straight profile"
+      ],
+      "earType": "normal",
+      "tailType": "normal"
+    },
+    "locationData": {
+      "region": "South Gujarat",
+      "state": "Gujarat",
+      "climate": "tropical",
+      "farmType": "dairy"
+    },
+    "expertValidation": {
+      "validatedBy": "Dr. Kiran Patel, Gujarat Veterinary College",
+      "confidenceLevel": "high",
+      "notes": "Typical Surti buffalo with good milking potential and adapted to tropical climate."
+    },
+    "createdAt": "2025-09-22T16:49:03.995Z"
+  },
+  {
+    "id": "sample_005",
+    "labels": {
+      "animalType": "cattle",
+      "breed": "Red Sindhi",
+      "age": "adult",
+      "gender": "female",
+      "healthCondition": "excellent"
+    },
+    "physicalAttributes": {
+      "bodyColor": [
+        "red"
+      ],
+      "hornType": "small",
+      "bodySize": "medium",
+      "bodyCondition": "well-fed",
+      "distinctiveFeatures": [
+        "dewlap"
+      ]
+    },
+    "breedSpecificTraits": {
+      "milkingCapability": "high",
+      "humpPresence": true,
+      "facialFeatures": [
+        "straight profile"
+      ],
+      "earType": "normal",
+      "tailType": "normal"
+    },
+    "locationData": {
+      "region": "Tharparkar",
+      "state": "Rajasthan",
+      "climate": "arid",
+      "farmType": "dairy"
+    },
+    "expertValidation": {
+      "validatedBy": "Dr. Mohan Lal, Rajasthan Agricultural University",
+      "confidenceLevel": "very-high",
+      "notes": "Excellent Red Sindhi cow, well-adapted to arid conditions with high milk yield."
+    },
+    "createdAt": "2025-09-22T16:49:03.995Z"
+  }
+]

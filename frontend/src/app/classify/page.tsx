@@ -13,42 +13,9 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { aiClassificationService, ClassificationResult } from '@/lib/services/ai-classification';
 
-// AI Classification Results Interface
-interface ClassificationResult {
-  animal_type: {
-    prediction: string;
-    confidence: number;
-    confidence_level: string;
-  };
-  breed: {
-    prediction: string;
-    confidence: number;
-    confidence_level: string;
-    top_3: Array<{
-      breed: string;
-      confidence: number;
-    }>;
-    needs_verification: boolean;
-    suggestion?: string;
-  };
-  age: {
-    prediction: string;
-    confidence: number;
-    confidence_level: string;
-  };
-  gender: {
-    prediction: string;
-    confidence: number;
-    confidence_level: string;
-  };
-  health: {
-    prediction: string;
-    confidence: number;
-    confidence_level: string;
-  };
-  processing_time: number;
-}
+// ClassificationResult interface is now imported from ai-classification service
 
 interface BreedInfo {
   id: number;
@@ -398,149 +365,99 @@ export default function ClassificationPage() {
     reader.readAsDataURL(file);
   };
 
-  // Enhanced AI Classification with realistic analysis
+  // AI Classification using Google Vision API
   const classifyImage = async (imageData: string) => {
-    if (!imageData) return;
+    if (!imageData) {
+      console.error('No image data provided');
+      toast.error('No image data to classify');
+      return;
+    }
     
     setIsLoading(true);
     setError(null);
     setClassificationResult(null);
     
     try {
-      console.log('Starting AI classification...');
+      console.log('Starting AI classification with enhanced system...');
+      console.log('Image data size:', imageData.length, 'bytes');
       
-      // Simulate realistic AI processing time
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      // Validate image data format
+      if (!imageData.startsWith('data:image/')) {
+        throw new Error('Invalid image format. Please use a valid image file.');
+      }
       
-      // Array of possible breeds with varied results
-      const indianBreeds = [
-        {
-          name: 'Gir',
-          animalType: 'cattle',
-          confidence: 0.78 + Math.random() * 0.2,
-          alternatives: ['Sahiwal', 'Red Sindhi', 'Kankrej'],
-          origin: 'Gujarat, India',
-          primaryUse: 'Milk production',
-          milkYield: '2000-3000 kg per lactation',
-          bodyColor: 'Reddish dun with white patches',
-          uniqueTraits: 'Prominent forehead, drooping ears, excellent dairy breed'
-        },
-        {
-          name: 'Sahiwal',
-          animalType: 'cattle',
-          confidence: 0.75 + Math.random() * 0.2,
-          alternatives: ['Gir', 'Red Sindhi', 'Tharparkar'],
-          origin: 'Punjab, Pakistan/India',
-          primaryUse: 'Dual purpose (milk and meat)',
-          milkYield: '2500-3500 kg per lactation',
-          bodyColor: 'Reddish dun to red',
-          uniqueTraits: 'Heat tolerance, loose skin, prominent hump'
-        },
-        {
-          name: 'Red Sindhi',
-          animalType: 'cattle',
-          confidence: 0.72 + Math.random() * 0.25,
-          alternatives: ['Sahiwal', 'Gir', 'Kankrej'],
-          origin: 'Sindh Province, Pakistan/India',
-          primaryUse: 'Milk production',
-          milkYield: '1800-2500 kg per lactation',
-          bodyColor: 'Red to dark red',
-          uniqueTraits: 'Compact size, good milk quality, disease resistant'
-        },
-        {
-          name: 'Murrah',
-          animalType: 'buffalo',
-          confidence: 0.80 + Math.random() * 0.15,
-          alternatives: ['Nili-Ravi', 'Surti', 'Jaffarabadi'],
-          origin: 'Haryana, India',
-          primaryUse: 'Milk production',
-          milkYield: '4000-5000 kg per lactation',
-          bodyColor: 'Jet black',
-          uniqueTraits: 'Curved horns, high milk fat content, heat tolerance'
-        },
-        {
-          name: 'Holstein Friesian',
-          animalType: 'cattle',
-          confidence: 0.70 + Math.random() * 0.25,
-          alternatives: ['Jersey', 'Brown Swiss', 'Gir Cross'],
-          origin: 'Netherlands/Germany',
-          primaryUse: 'Milk production',
-          milkYield: '6000-8000 kg per lactation',
-          bodyColor: 'Black and white patches',
-          uniqueTraits: 'High milk production, large size, calm temperament'
-        }
-      ];
+      // Test service availability
+      if (!aiClassificationService) {
+        throw new Error('AI Classification service is not available');
+      }
       
-      // Randomly select a breed for realistic variety
-      const selectedBreed = indianBreeds[Math.floor(Math.random() * indianBreeds.length)];
+      // Call the AI classification service with additional logging
+      console.log('Calling AI classification service...');
+      const result = await aiClassificationService.classifyImage(imageData);
       
-      // Create realistic top 3 predictions
-      const shuffledBreeds = [...indianBreeds].sort(() => Math.random() - 0.5);
-      const top3 = [
-        { breed: selectedBreed.name, confidence: selectedBreed.confidence },
-        { breed: selectedBreed.alternatives[0], confidence: selectedBreed.confidence - 0.15 - Math.random() * 0.2 },
-        { breed: selectedBreed.alternatives[1], confidence: selectedBreed.confidence - 0.25 - Math.random() * 0.15 }
-      ].sort((a, b) => b.confidence - a.confidence);
+      console.log('✅ Classification completed successfully:', result);
       
-      // Generate realistic confidence levels
-      const getConfidenceLevel = (conf: number) => {
-        if (conf >= 0.8) return 'high';
-        if (conf >= 0.6) return 'medium';
-        return 'low';
+      // Validate result structure
+      if (!result || !result.animal_type || !result.breed) {
+        throw new Error('Invalid classification result structure');
+      }
+      
+      setClassificationResult(result);
+      
+      // Create breed data for breed info loading
+      const breedData = {
+        animalType: result.animal_type.prediction,
+        origin: 'India',
+        primaryUse: 'Milk production',
+        milkYield: result.animal_type.prediction === 'buffalo' 
+          ? '4000-5000 kg per lactation' 
+          : '2000-3500 kg per lactation',
+        bodyColor: 'Varies by breed',
+        uniqueTraits: 'Traditional Indian livestock breed'
       };
-      
-      // Simulate realistic analysis results
-      const mockResult: ClassificationResult = {
-        animal_type: {
-          prediction: selectedBreed.animalType,
-          confidence: 0.85 + Math.random() * 0.14,
-          confidence_level: 'high'
-        },
-        breed: {
-          prediction: selectedBreed.name,
-          confidence: selectedBreed.confidence,
-          confidence_level: getConfidenceLevel(selectedBreed.confidence),
-          top_3: top3,
-          needs_verification: selectedBreed.confidence < 0.75
-        },
-        age: {
-          prediction: Math.random() > 0.6 ? 'adult' : (Math.random() > 0.5 ? 'young adult' : 'calf'),
-          confidence: 0.60 + Math.random() * 0.25,
-          confidence_level: 'medium'
-        },
-        gender: {
-          prediction: Math.random() > 0.5 ? 'female' : 'male',
-          confidence: 0.65 + Math.random() * 0.25,
-          confidence_level: 'medium'
-        },
-        health: {
-          prediction: Math.random() > 0.8 ? 'healthy' : (Math.random() > 0.6 ? 'good' : 'fair'),
-          confidence: 0.75 + Math.random() * 0.2,
-          confidence_level: 'high'
-        },
-        processing_time: 2.5 + Math.random() * 1.0
-      };
-      
-      console.log('Classification completed:', mockResult);
-      setClassificationResult(mockResult);
       
       // Load detailed breed information
-      loadBreedInfo(selectedBreed.name, selectedBreed);
+      loadBreedInfo(result.breed.prediction, breedData);
       
       // Show success with confidence level
-      const confidenceText = mockResult.breed.confidence_level === 'high' ? 'High confidence' : 
-                            mockResult.breed.confidence_level === 'medium' ? 'Medium confidence' : 'Low confidence';
+      const confidenceText = result.breed.confidence_level === 'high' ? 'High confidence' : 
+                            result.breed.confidence_level === 'medium' ? 'Medium confidence' : 'Low confidence';
       
-      toast.success(`🎉 ${mockResult.breed.prediction} identified! (${confidenceText})`);
-      
-      if (mockResult.breed.needs_verification) {
-        toast.info('⚠️ Verification recommended for accuracy');
+      if (result.breed.prediction === 'Unrecognized') {
+        toast.error('🤔 Animal not recognized. Please try a clearer image.');
+        if (result.breed.suggestion) {
+          toast.info(result.breed.suggestion);
+        }
+      } else {
+        toast.success(`🎉 ${result.breed.prediction} identified! (${confidenceText})`);
+        
+        if (result.breed.needs_verification) {
+          toast.info('⚠️ Verification recommended for accuracy');
+        }
       }
       
     } catch (error) {
-      console.error('Classification error:', error);
-      setError('Classification failed. Please try again.');
-      toast.error('Classification failed. Please try again.');
+      console.error('❌ Classification error details:', {
+        error,
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : 'No stack trace',
+        imageDataValid: !!imageData && imageData.startsWith('data:image/'),
+        serviceAvailable: !!aiClassificationService
+      });
+      
+      const errorMessage = error instanceof Error ? error.message : 'Unknown classification error';
+      setError(`Classification failed: ${errorMessage}`);
+      
+      // Provide specific error messages for better user experience
+      if (errorMessage.includes('Invalid image format')) {
+        toast.error('Please upload a valid image file (JPEG, PNG, etc.)');
+      } else if (errorMessage.includes('service is not available')) {
+        toast.error('AI service is temporarily unavailable. Please try again.');
+      } else if (errorMessage.includes('Invalid classification result')) {
+        toast.error('Classification system returned invalid results. Please try again.');
+      } else {
+        toast.error(`Classification failed: ${errorMessage}`);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -743,16 +660,37 @@ export default function ClassificationPage() {
                               <li>• Avoid blurry or shaky images</li>
                             </ul>
                           </div>
-                          <div className="flex-shrink-0">
-                            <p className="text-sm text-muted-foreground mb-2">Having camera issues?</p>
-                            <Button
-                              onClick={testCameraAvailability}
-                              variant="outline"
-                              size="sm"
-                              className="text-sm btn-enhanced hover:border-purple-400 hover:bg-purple-50"
-                            >
-                              <span className="text-purple-700">Test Camera 🔍</span>
-                            </Button>
+                          <div className="flex-shrink-0 space-y-2">
+                            <p className="text-sm text-muted-foreground mb-2">Having issues?</p>
+                            <div className="space-y-2">
+                              <Button
+                                onClick={testCameraAvailability}
+                                variant="outline"
+                                size="sm"
+                                className="text-sm btn-enhanced hover:border-purple-400 hover:bg-purple-50 w-full"
+                              >
+                                <span className="text-purple-700">Test Camera 🔍</span>
+                              </Button>
+                              <Button
+                                onClick={async () => {
+                                  try {
+                                    toast.info('Testing AI service...');
+                                    const testResult = await aiClassificationService.classifyImage('data:image/jpeg;base64,test');
+                                    toast.success('✅ AI service is working correctly!');
+                                    console.log('AI test result:', testResult);
+                                  } catch (error) {
+                                    const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+                                    toast.error(`❌ AI test failed: ${errorMsg}`);
+                                    console.error('AI test failed:', error);
+                                  }
+                                }}
+                                variant="outline"
+                                size="sm"
+                                className="text-sm btn-enhanced hover:border-green-400 hover:bg-green-50 w-full"
+                              >
+                                <span className="text-green-700">Test AI 🤖</span>
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </CardContent>

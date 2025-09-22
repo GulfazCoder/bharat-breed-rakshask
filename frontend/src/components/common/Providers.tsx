@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import { store, persistor } from '@/lib/store';
+import { store } from '@/lib/store';
 import { Card, CardContent } from '@/components/ui/card';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -54,13 +54,28 @@ const LoadingScreen: React.FC = () => (
 );
 
 export const Providers: React.FC<ProvidersProps> = ({ children }) => {
+  const [isLoading, setIsLoading] = React.useState(true);
+  
+  React.useEffect(() => {
+    // Simulate loading for a short time, then show content
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // Show loading for 1 second, then show content
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+  
   return (
     <Provider store={store}>
-      <PersistGate loading={<LoadingScreen />} persistor={persistor}>
+      <AuthProvider>
         <LanguageProvider>
           {children}
         </LanguageProvider>
-      </PersistGate>
+      </AuthProvider>
     </Provider>
   );
 };

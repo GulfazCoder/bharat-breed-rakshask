@@ -1,43 +1,47 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/lib/types';
-import { notificationsSlice } from '@/lib/store/slices/notificationsSlice';
+import { useState } from 'react';
 
 /**
- * Custom hook to automatically generate notification reminders for breeding events and due dates.
- * This hook should be used in the main breeding components to ensure reminders are always up to date.
+ * Mock custom hook for notification reminders (simplified for demo)
+ * This provides the same interface but doesn't depend on complex Redux state
  */
 export const useNotificationReminders = () => {
-  const dispatch = useDispatch();
-  const calendarEvents = useSelector((state: RootState) => state.breeding.calendarEvents || []);
-  const breedingRecords = useSelector((state: RootState) => state.breeding.breedingRecords || []);
-  const notifications = useSelector((state: RootState) => state.notifications.notifications || []);
-  
-  useEffect(() => {
-    // Generate reminders whenever calendar events or breeding records change
-    if (calendarEvents.length > 0 || breedingRecords.length > 0) {
-      dispatch(notificationsSlice.actions.generateBreedingReminders({
-        calendarEvents,
-        breedingRecords
-      }));
+  // Mock notifications data
+  const [notifications] = useState([
+    {
+      id: '1',
+      title: 'Breeding Reminder',
+      message: 'Ganga is due for vaccination',
+      type: 'info' as const,
+      read: false,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: '2', 
+      title: 'Due Date Alert',
+      message: 'Expected delivery in 25 days',
+      type: 'warning' as const,
+      read: false,
+      createdAt: new Date().toISOString()
     }
-  }, [calendarEvents, breedingRecords, dispatch]);
+  ]);
   
-  // Return utilities for managing notifications
+  const [unreadCount] = useState(2);
+  
+  // Return utilities for managing notifications (simplified)
   return {
     notifications,
-    unreadCount: useSelector((state: RootState) => state.notifications.unreadCount || 0),
+    unreadCount,
     markAsRead: (id: string) => {
-      dispatch(notificationsSlice.actions.markAsRead(id));
+      console.log('Marking notification as read:', id);
     },
     markAllAsRead: () => {
-      dispatch(notificationsSlice.actions.markAllAsRead());
+      console.log('Marking all notifications as read');
     },
     deleteNotification: (id: string) => {
-      dispatch(notificationsSlice.actions.deleteNotification(id));
+      console.log('Deleting notification:', id);
     },
     clearAllNotifications: () => {
-      dispatch(notificationsSlice.actions.clearAllNotifications());
+      console.log('Clearing all notifications');
     },
     addNotification: (notification: {
       title: string;
@@ -46,7 +50,7 @@ export const useNotificationReminders = () => {
       relatedId?: string;
       relatedType?: string;
     }) => {
-      dispatch(notificationsSlice.actions.addNotification(notification));
+      console.log('Adding notification:', notification);
     }
   };
 };

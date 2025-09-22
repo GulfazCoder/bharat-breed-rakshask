@@ -1,25 +1,58 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+// Mock Firebase services to prevent initialization errors during development
 
-// Firebase configuration - these should be environment variables in production
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "demo-api-key",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "bharat-breed-rakshask.firebaseapp.com",
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "bharat-breed-rakshask",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "bharat-breed-rakshask.appspot.com",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "123456789",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:123456789:web:abcdefgh"
+// Mock Firebase Auth
+export const auth = {
+  currentUser: null,
+  onAuthStateChanged: (callback: any) => {
+    // Mock implementation - immediately call with null user
+    callback(null);
+    return () => {}; // Unsubscribe function
+  },
+  signOut: () => Promise.resolve(),
+  signInWithPhoneNumber: () => Promise.reject(new Error('Mock Firebase - not implemented')),
+  signInWithCredential: () => Promise.reject(new Error('Mock Firebase - not implemented'))
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Mock Firestore
+export const firestore = {
+  collection: () => ({
+    doc: () => ({
+      set: () => Promise.resolve(),
+      get: () => Promise.resolve({ exists: false, data: () => ({}) }),
+      update: () => Promise.resolve(),
+      delete: () => Promise.resolve()
+    }),
+    add: () => Promise.resolve({ id: 'mock-id' }),
+    where: () => ({
+      get: () => Promise.resolve({ docs: [] })
+    })
+  })
+};
 
-// Initialize Firebase services
-export const auth = getAuth(app);
-export const firestore = getFirestore(app);
-export const storage = getStorage(app);
+// Alias for compatibility
+export const db = firestore;
 
-// Export the app instance
+// Mock Firebase Storage
+export const storage = {
+  ref: () => ({
+    put: () => Promise.resolve({
+      ref: {
+        getDownloadURL: () => Promise.resolve('mock-url')
+      }
+    }),
+    putString: () => Promise.resolve({
+      ref: {
+        getDownloadURL: () => Promise.resolve('mock-url')
+      }
+    }),
+    getDownloadURL: () => Promise.resolve('mock-url')
+  })
+};
+
+// Mock app instance
+const app = {
+  name: 'mock-app',
+  options: {}
+};
+
 export default app;

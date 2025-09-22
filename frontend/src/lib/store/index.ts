@@ -1,52 +1,73 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import { authSlice } from './slices/authSlice';
-import { animalsSlice } from './slices/animalsSlice';
-import { breedsSlice } from './slices/breedsSlice';
-import { breedingSlice } from './slices/breedingSlice';
-import { notificationsSlice } from './slices/notificationsSlice';
-import { offlineSlice } from './slices/offlineSlice';
-import { RootState } from '@/lib/types';
+import { configureStore, combineReducers, createSlice } from '@reduxjs/toolkit';
 
-// Persist configuration
-const persistConfig = {
-  key: 'root',
-  storage,
-  whitelist: ['auth', 'animals', 'breeds', 'breeding', 'offline'], // Only persist these slices
-  blacklist: ['notifications'], // Don't persist notifications
-};
+// Import actual slices
+import { breedingSlice } from './slices/breedingSlice';
+import { authSlice } from './slices/authSlice';
+
+// Simple mock slices for others that don't exist yet
+const createMockSlice = (name: string, initialState: any = {}) => createSlice({
+  name,
+  initialState,
+  reducers: {
+    // Add a generic update reducer for flexibility
+    updateState: (state, action) => {
+      return { ...state, ...action.payload };
+    }
+  }
+});
+
+// Use actual slices where available, mock ones where not
+const animalsSlice = createMockSlice('animals', {
+  animals: [],
+  selectedAnimal: null,
+  loading: false,
+  error: null,
+  filters: {
+    category: null,
+    breedId: null,
+    healthStatus: null,
+    isPregnant: null
+  }
+});
+
+const breedsSlice = createMockSlice('breeds', {
+  breeds: [],
+  selectedBreed: null,
+  loading: false,
+  error: null
+});
+
+const notificationsSlice = createMockSlice('notifications', {
+  notifications: [],
+  unreadCount: 0,
+  loading: false,
+  error: null
+});
+
+const offlineSlice = createMockSlice('offline', {
+  isOnline: true,
+  pendingActions: [],
+  lastSyncTime: null
+});
 
 // Root reducer
 const rootReducer = combineReducers({
   auth: authSlice.reducer,
   animals: animalsSlice.reducer,
   breeds: breedsSlice.reducer,
-  breeding: breedingSlice.reducer,
+  breeding: breedingSlice.reducer, // Use actual breeding slice
   notifications: notificationsSlice.reducer,
   offline: offlineSlice.reducer,
 });
 
-// Persisted reducer
-const persistedReducer = persistReducer(persistConfig, rootReducer);
-
-// Configure store
+// Configure store (simplified without persistence)
 export const store = configureStore({
-  reducer: persistedReducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
-      },
-    }),
+  reducer: rootReducer,
   devTools: process.env.NODE_ENV !== 'production',
 });
 
-// Persistor
-export const persistor = persistStore(store);
-
 // Types
 export type AppDispatch = typeof store.dispatch;
-export type { RootState };
+export type RootState = ReturnType<typeof store.getState>;
 
 export default store;
