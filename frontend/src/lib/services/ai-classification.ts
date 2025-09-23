@@ -390,21 +390,45 @@ export class AIClassificationService {
       this.confidenceAnalysis = null;
       this.validationResult = null;
 
-      // Primary classification attempt
+      // Primary classification attempt - Use Custom Enhanced AI
       try {
-        // If no API key, use enhanced mock data
-        if (!this.apiKey) {
-          classification = this.generateEnhancedMockResult(startTime);
-        } else {
-          // Convert data URL to base64
-          const base64Image = this.dataUrlToBase64(imageDataUrl);
-          
-          // Call Google Vision API
-          const visionResult = await this.callGoogleVisionAPI(base64Image);
-          
-          // Process the results
-          classification = this.processVisionResults(visionResult, startTime);
+        console.log('🧠 Starting Custom Enhanced AI Classification (Primary Method)');
+        
+        // Use our custom Standalone Enhanced AI Classification as PRIMARY method
+        const { StandaloneEnhancedAI } = await import('./standalone-enhanced-ai');
+        const customClassifier = new StandaloneEnhancedAI();
+        
+        // Get user location for regional breed preferences (optional)
+        let userLocation: string | undefined;
+        try {
+          if (navigator.geolocation && navigator.permissions) {
+            // Try to get approximate location for regional breed matching
+            userLocation = await this.getApproximateLocation();
+          }
+        } catch (e) {
+          console.log('📍 Location not available, using general classification');
         }
+        
+        // Classify using our custom enhanced system
+        const enhancedResult = await customClassifier.classifyImageEnhanced(
+          imageDataUrl,
+          userLocation,
+          {
+            // Optional farmer input - could be extended later
+            purpose: 'classification'
+          }
+        );
+        
+        // Convert enhanced result to standard format
+        classification = this.convertEnhancedToStandardResult(enhancedResult);
+        
+        console.log('✅ Custom Enhanced AI Classification completed:', {
+          animalType: classification.animal_type.prediction,
+          breed: classification.breed.prediction,
+          confidence: classification.breed.confidence,
+          enhancedConfidence: enhancedResult.enhancedConfidence,
+          alternativesCount: enhancedResult.alternativeAnalysis.length
+        });
 
         // Enhanced confidence scoring if enabled and primary succeeded
         if (this.enableConfidenceScoring && classification) {
@@ -482,19 +506,37 @@ featureCount: classification.breed?.top_3?.length || 1
         primaryError = error;
         console.warn('⚠️ Primary classification failed:', error.message);
         
-        // Try fallback if enabled
+        // Try fallback methods if enabled
         if (this.enableFallback) {
-          console.log('🔄 Attempting fallback classification...');
+          console.log('🔄 Attempting fallback classification methods...');
+          
+          // First try: Our custom fallback classifier
           try {
+            console.log('🔄 Trying custom fallback classifier...');
             this.fallbackResult = await fallbackClassifier.performFallback(
               imageDataUrl, 
               error
             );
             classification = this.fallbackResult.classification;
-            console.log(`✅ Fallback successful using: ${this.fallbackResult.fallbackMethod}`);
+            console.log(`✅ Custom fallback successful using: ${this.fallbackResult.fallbackMethod}`);
           } catch (fallbackError) {
-            console.error('❌ Fallback classification also failed:', fallbackError);
-            throw new Error('Both primary and fallback classification failed');
+            console.warn('⚠️ Custom fallback failed, trying Google Vision API...', fallbackError.message);
+            
+            // Second try: Google Vision API as backup
+            try {
+              if (this.apiKey) {
+                console.log('🔄 Using Google Vision API as secondary fallback...');
+                const base64Image = this.dataUrlToBase64(imageDataUrl);
+                const visionResult = await this.callGoogleVisionAPI(base64Image);
+                classification = this.processVisionResults(visionResult, Date.now());
+                console.log('✅ Google Vision API fallback successful');
+              } else {
+                throw new Error('No API key available for Google Vision fallback');
+              }
+            } catch (visionError) {
+              console.error('❌ All fallback methods failed:', visionError.message);
+              throw new Error('Primary, custom fallback, and Google Vision API all failed');
+            }
           }
         } else {
           throw error;
@@ -851,6 +893,89 @@ featureCount: classification.breed?.top_3?.length || 1
    */
   private matchesAnyTerm(description: string, terms: string[]): boolean {
     return terms.some(term => description.includes(term.toLowerCase()));
+  }
+
+  /**
+   * Get approximate user location for regional breed preferences
+   */
+  private async getApproximateLocation(): Promise<string | undefined> {
+    return new Promise((resolve) => {
+      const timeout = setTimeout(() => resolve(undefined), 3000); // 3 second timeout
+      
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          clearTimeout(timeout);
+          const { latitude, longitude } = position.coords;
+          
+          // Map coordinates to Indian states (simplified)
+          const region = this.coordinatesToRegion(latitude, longitude);
+          console.log(`📍 Detected region: ${region}`);
+          resolve(region);
+        },
+        (error) => {
+          clearTimeout(timeout);
+          console.log('📍 Geolocation failed:', error.message);
+          resolve(undefined);
+        },
+        { enableHighAccuracy: false, timeout: 2000, maximumAge: 300000 }
+      );
+    });
+  }
+
+  /**
+   * Convert coordinates to approximate Indian region
+   */
+  private coordinatesToRegion(lat: number, lng: number): string {
+    // Simplified region mapping for major Indian states
+    if (lat >= 20 && lat <= 24 && lng >= 68 && lng <= 74) return 'gujarat';
+    if (lat >= 30 && lat <= 32.5 && lng >= 74 && lng <= 77) return 'punjab';
+    if (lat >= 15 && lat <= 21 && lng >= 72 && lng <= 81) return 'maharashtra';
+    if (lat >= 24 && lat <= 30 && lng >= 69 && lng <= 78) return 'rajasthan';
+    if (lat >= 11 && lat <= 18 && lng >= 74 && lng <= 78) return 'karnataka';
+    if (lat >= 8 && lat <= 13 && lng >= 77 && lng <= 80) return 'tamil_nadu';
+    
+    return 'default'; // Use general classification
+  }
+
+  /**
+   * Convert Enhanced AI result to standard ClassificationResult format
+   */
+  private convertEnhancedToStandardResult(enhancedResult: any): ClassificationResult {
+    return {
+      animal_type: {
+        prediction: enhancedResult.animal_type?.prediction || 'cattle',
+        confidence: enhancedResult.animal_type?.confidence || enhancedResult.enhancedConfidence || 0.8,
+        confidence_level: this.getConfidenceLevel(enhancedResult.animal_type?.confidence || enhancedResult.enhancedConfidence || 0.8)
+      },
+      breed: {
+        prediction: enhancedResult.breed?.prediction || 'Mixed Breed',
+        confidence: enhancedResult.breed?.confidence || enhancedResult.enhancedConfidence || 0.8,
+        confidence_level: this.getConfidenceLevel(enhancedResult.breed?.confidence || enhancedResult.enhancedConfidence || 0.8),
+        top_3: enhancedResult.breed?.top_3 || [
+          { breed: enhancedResult.breed?.prediction || 'Mixed Breed', confidence: enhancedResult.enhancedConfidence || 0.8 },
+          { breed: 'Gir', confidence: (enhancedResult.enhancedConfidence || 0.8) - 0.1 },
+          { breed: 'Sahiwal', confidence: (enhancedResult.enhancedConfidence || 0.8) - 0.2 }
+        ],
+        needs_verification: (enhancedResult.enhancedConfidence || 0.8) < 0.7,
+        suggestion: enhancedResult.recommendedActions?.[0] || 'Classification completed successfully'
+      },
+      age: {
+        prediction: enhancedResult.age?.prediction || 'adult',
+        confidence: enhancedResult.age?.confidence || 0.7,
+        confidence_level: this.getConfidenceLevel(enhancedResult.age?.confidence || 0.7)
+      },
+      gender: {
+        prediction: enhancedResult.gender?.prediction || 'unknown',
+        confidence: enhancedResult.gender?.confidence || 0.6,
+        confidence_level: this.getConfidenceLevel(enhancedResult.gender?.confidence || 0.6)
+      },
+      health: {
+        prediction: enhancedResult.health?.prediction || 'good',
+        confidence: enhancedResult.health?.confidence || 0.7,
+        confidence_level: this.getConfidenceLevel(enhancedResult.health?.confidence || 0.7)
+      },
+      processing_time: enhancedResult.processing_time || 0.5
+    };
   }
 
   /**

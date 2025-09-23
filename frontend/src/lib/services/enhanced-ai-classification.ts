@@ -511,10 +511,10 @@ class EnhancedAIClassificationService {
     });
 
     // Get winning predictions
-    const winningBreed = [...breedVotes.entries()]
+    const winningBreed = Array.from(breedVotes.entries())
       .sort((a, b) => b[1] - a[1])[0];
     
-    const winningAnimalType = [...animalTypeVotes.entries()]
+    const winningAnimalType = Array.from(animalTypeVotes.entries())
       .sort((a, b) => b[1] - a[1])[0];
 
     // Build consensus result
@@ -761,6 +761,7 @@ class EnhancedAIClassificationService {
   }
 }
 
-// Export enhanced service
+// Export enhanced service class and instance
+export { EnhancedAIClassificationService };
 export const enhancedAIService = new EnhancedAIClassificationService();
 export default enhancedAIService;

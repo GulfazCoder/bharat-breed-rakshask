@@ -346,22 +346,73 @@ export default function ClassificationPage() {
     }
   }, []);
 
-  // File upload handler
+  // File upload handler with enhanced debugging
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('🔍 handleFileUpload called');
+    
     const file = event.target.files?.[0];
-    if (!file) return;
+    console.log('📁 Selected file:', file);
+    
+    if (!file) {
+      console.log('❌ No file selected');
+      toast.error('No file selected');
+      return;
+    }
+
+    console.log('📋 File details:', {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified
+    });
 
     if (!file.type.startsWith('image/')) {
+      console.log('❌ Invalid file type:', file.type);
       toast.error('Please select a valid image file');
       return;
     }
 
+    console.log('✅ Valid image file, starting FileReader...');
     const reader = new FileReader();
+    
+    reader.onloadstart = () => {
+      console.log('📖 FileReader started');
+      toast.info('Reading image file...');
+    };
+    
+    reader.onprogress = (e) => {
+      if (e.lengthComputable) {
+        const percentComplete = (e.loaded / e.total) * 100;
+        console.log(`📖 FileReader progress: ${percentComplete.toFixed(1)}%`);
+      }
+    };
+    
     reader.onload = (e) => {
+      console.log('✅ FileReader completed successfully');
       const imageData = e.target?.result as string;
+      
+      if (!imageData) {
+        console.log('❌ No image data from FileReader');
+        toast.error('Failed to read image file');
+        return;
+      }
+      
+      console.log('📸 Image data created:', {
+        length: imageData.length,
+        type: imageData.substring(0, 50) + '...',
+        isValidDataUrl: imageData.startsWith('data:image/')
+      });
+      
       setCapturedImage(imageData);
+      toast.success('Image loaded successfully! Starting classification...');
       classifyImage(imageData);
     };
+    
+    reader.onerror = (e) => {
+      console.error('❌ FileReader error:', e);
+      toast.error('Failed to read image file');
+    };
+    
     reader.readAsDataURL(file);
   };
 
@@ -629,7 +680,18 @@ export default function ClassificationPage() {
                         <span className="text-cyber-green-700 font-medium">{t('takePhoto')}</span>
                       </Button>
                       <Button
-                        onClick={() => fileInputRef.current?.click()}
+                        onClick={() => {
+                          console.log('🔍 Upload button clicked');
+                          console.log('📁 fileInputRef.current:', fileInputRef.current);
+                          
+                          if (fileInputRef.current) {
+                            console.log('✅ File input exists, clicking...');
+                            fileInputRef.current.click();
+                          } else {
+                            console.log('❌ File input ref is null!');
+                            toast.error('Upload not available - please refresh the page');
+                          }
+                        }}
                         variant="outline"
                         size="lg"
                         className="h-20 flex-col btn-enhanced hover:border-blue-400 hover:bg-blue-50 transition-all duration-300"
@@ -646,6 +708,71 @@ export default function ClassificationPage() {
                       onChange={handleFileUpload}
                       className="hidden"
                     />
+                    
+                    {/* Debug and backup upload methods */}
+                    <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
+                      <h4 className="font-medium mb-3 text-gray-700">🔧 Debug Upload Methods</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <Button
+                          onClick={() => {
+                            console.log('🔍 Testing visible file input...');
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.accept = 'image/*';
+                            input.onchange = (e) => {
+                              const file = (e.target as HTMLInputElement).files?.[0];
+                              if (file) {
+                                console.log('✅ File selected via created input:', file.name);
+                                const event = { target: { files: [file] } } as React.ChangeEvent<HTMLInputElement>;
+                                handleFileUpload(event);
+                              }
+                            };
+                            input.click();
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="text-xs"
+                        >
+                          📁 Method 1
+                        </Button>
+                        
+                        <Button
+                          onClick={() => {
+                            console.log('🔍 Testing ref click...');
+                            if (fileInputRef.current) {
+                              fileInputRef.current.value = '';
+                              fileInputRef.current.click();
+                              console.log('✅ Ref click executed');
+                            } else {
+                              console.log('❌ Ref is null');
+                            }
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="text-xs"
+                        >
+                          🔄 Method 2
+                        </Button>
+                        
+                        <Button
+                          onClick={() => {
+                            console.log('🔍 Manual test with sample data...');
+                            const sampleImageData = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/VAAAAAAAAAA';
+                            console.log('✅ Testing with sample image data...');
+                            setCapturedImage(sampleImageData);
+                            classifyImage(sampleImageData);
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="text-xs"
+                        >
+                          🧪 Test AI
+                        </Button>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        If main upload isn't working, try these debug methods
+                      </p>
+                    </div>
                     
                     {/* Tips & Camera Test */}
                     <Card>
